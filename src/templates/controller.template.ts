@@ -1,16 +1,20 @@
 import * as changeCase from 'change-case';
 
+import Checkbox from '../models/checkbox';
+import { METHOD } from '../models/method-actions';
+
 export function getControllerTemplate(
 	controllerName: string,
 	packageController: string,
 	packageEntity: string,
 	packageIService: string,
-	typeVariableID: string
+	typeVariableID: string,
+	methods: Array<Checkbox>
 ): string {
 
 	const pascalCaseControllerName = changeCase.pascalCase(controllerName.toLowerCase());
 	const snakeCaseControllerName = changeCase.snakeCase(controllerName.toLowerCase());
-	return `package ${packageController};
+	let template = `package ${packageController};
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -34,40 +38,96 @@ import ${packageIService}.I${pascalCaseControllerName}Service;
 @RequestMapping("/api/${snakeCaseControllerName}")
 public class ${pascalCaseControllerName}RestController {
 
-  @Autowired
-  I${pascalCaseControllerName}Service ${snakeCaseControllerName}Service;
-  
-  @GetMapping("/{id}")
+	@Autowired
+	I${pascalCaseControllerName}Service ${snakeCaseControllerName}Service;
+
+	${insertMethods(pascalCaseControllerName, snakeCaseControllerName, typeVariableID, methods)}
+}`;
+
+	return template;
+}
+
+function insertMethods(pascalCaseControllerName: string, snakeCaseControllerName: string, typeVariableID: string, methods: Array<Checkbox>) {
+	let code = '';
+	methods.forEach(method => {
+		if (method.checked) {
+			switch (method.method) {
+				case METHOD.findById:
+					code += insertMethodFindById(pascalCaseControllerName, snakeCaseControllerName, typeVariableID);
+					code += '\n\n\t';
+					break;
+				case METHOD.findAllPaginatedBySearch:
+					code += insertMethodfindAllPaginatedBySearch(pascalCaseControllerName, snakeCaseControllerName);
+					code += '\n\n\t';
+					break;
+				case METHOD.save:
+					code += insertMethodSave(pascalCaseControllerName, snakeCaseControllerName);
+					code += '\n\n\t';
+					break;
+				case METHOD.update:
+					code += insertMethodUpdate(pascalCaseControllerName, snakeCaseControllerName);
+					code += '\n\n\t';
+					break;
+				case METHOD.changeState:
+					code += insertMethodChangeState(pascalCaseControllerName, snakeCaseControllerName);
+					code += '\n\n\t';
+					break;
+				case METHOD.delete:
+					code += insertMethodDelete(pascalCaseControllerName, snakeCaseControllerName);
+					code += '\n\n\t';
+					break;
+			}
+		}
+
+	});
+	return code;
+}
+
+
+function insertMethodFindById(pascalCaseControllerName: string, snakeCaseControllerName: string, typeVariableID: string) {
+	return `@GetMapping("/{id}")
 	public ResponseEntity<ResultadoProc<${pascalCaseControllerName}>> findById(@PathVariable("id") ${typeVariableID} ${snakeCaseControllerName}Id) {
 		ResultadoProc<${pascalCaseControllerName}> salida = ${snakeCaseControllerName}Service.findById(${snakeCaseControllerName}Id);
 		return new ResponseEntity<ResultadoProc<${pascalCaseControllerName}>>(salida, HttpStatus.OK);
-	}
+	}`;
+}
 
-	@PostMapping("/page-all-by-search")
-	public ResponseEntity<ResultadoProc<Page<${pascalCaseControllerName}>>> findAllPaginatedBySearch(
-			@RequestBody SearchPagination<String> searchPagination) {
-		PageRequest pageable = searchPagination.getPageRequest();
-		String search = searchPagination.getSeek();
-		ResultadoProc<Page<${pascalCaseControllerName}>> salida = ${snakeCaseControllerName}Service.findAllPaginatedBySearch(pageable,
-				search);
-		return new ResponseEntity<ResultadoProc<Page<${pascalCaseControllerName}>>>(salida, HttpStatus.OK);
-	}
+function insertMethodfindAllPaginatedBySearch(pascalCaseControllerName: string, snakeCaseControllerName: string) {
+	return `@PostMapping("/page-all-by-search")
+		public ResponseEntity<ResultadoProc<Page<${pascalCaseControllerName}>>> findAllPaginatedBySearch(
+				@RequestBody SearchPagination<String> searchPagination) {
+			PageRequest pageable = searchPagination.getPageRequest();
+			String search = searchPagination.getSeek();
+			ResultadoProc<Page<${pascalCaseControllerName}>> salida = ${snakeCaseControllerName}Service.findAllPaginatedBySearch(pageable,
+					search);
+			return new ResponseEntity<ResultadoProc<Page<${pascalCaseControllerName}>>>(salida, HttpStatus.OK);
+		}`;
+}
 
-	@PostMapping
+function insertMethodSave(pascalCaseControllerName: string, snakeCaseControllerName: string) {
+	return `@PostMapping
 	public ResponseEntity<ResultadoProc<${pascalCaseControllerName}>> save(@RequestBody ${pascalCaseControllerName} ${snakeCaseControllerName}) {
 		ResultadoProc<${pascalCaseControllerName}> salida = ${snakeCaseControllerName}Service.save(${snakeCaseControllerName});
 		return new ResponseEntity<ResultadoProc<${pascalCaseControllerName}>>(salida, HttpStatus.OK);
-	}
+	}`;
+}
 
-	@PutMapping
+function insertMethodUpdate(pascalCaseControllerName: string, snakeCaseControllerName: string) {
+	return `@PutMapping
 	public ResponseEntity<ResultadoProc<${pascalCaseControllerName}>> update(@RequestBody ${pascalCaseControllerName} ${snakeCaseControllerName}) {
 		ResultadoProc<${pascalCaseControllerName}> salida = ${snakeCaseControllerName}Service.update(${snakeCaseControllerName});
 		return new ResponseEntity<ResultadoProc<${pascalCaseControllerName}>>(salida, HttpStatus.OK);
-	}
+	}`;
+}
 
+function insertMethodChangeState(pascalCaseControllerName: string, snakeCaseControllerName: string) {
+	return ``;
 }
-`;
+
+function insertMethodDelete(pascalCaseControllerName: string, snakeCaseControllerName: string) {
+	return ``;
 }
+
 
 
 

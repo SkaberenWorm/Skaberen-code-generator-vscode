@@ -1,8 +1,11 @@
 import * as changeCase from 'change-case';
 import { existsSync, lstatSync } from 'fs';
 import * as lodash from 'lodash';
-import { InputBoxOptions, Uri, window } from 'vscode';
+import { InputBoxOptions, QuickPickItem, Uri, window } from 'vscode';
 
+import Checkbox from '../models/checkbox';
+import Data from '../models/data';
+import { methods } from '../models/method-actions';
 import {
   createController,
   createEntity,
@@ -13,7 +16,18 @@ import {
 import { createDirectory, promptForTargetDirectory } from '../utils/utils';
 
 export const generateCode = async (uri: Uri) => {
-  console.log('generateCode');
+
+  let targetDirectory;
+  if (lodash.isNil(lodash.get(uri, "fsPath")) || !lstatSync(uri.fsPath).isDirectory()) {
+    targetDirectory = await promptForTargetDirectory();
+    if (lodash.isNil(targetDirectory)) {
+      window.showErrorMessage("Por favor seleccione un directorio válido");
+      return;
+    }
+  } else {
+    targetDirectory = uri.fsPath;
+  }
+
   const entityName = await promptForEntityName();
   if (lodash.isNil(entityName) || entityName.trim() === "") {
     window.showErrorMessage("El nombre de la clase no debe estar vacía");
@@ -33,20 +47,27 @@ export const generateCode = async (uri: Uri) => {
     }
   }
 
-  let targetDirectory;
-  if (lodash.isNil(lodash.get(uri, "fsPath")) || !lstatSync(uri.fsPath).isDirectory()) {
-    targetDirectory = await promptForTargetDirectory();
-    if (lodash.isNil(targetDirectory)) {
-      window.showErrorMessage("Por favor seleccione un directorio válido");
-      return;
-    }
-  } else {
-    targetDirectory = uri.fsPath;
+  // let methodsSelected: Array<Checkbox> = [];
+  const allCheckboxes: Array<Checkbox> = methods;
+  const snakeCaseEntityName = changeCase.snakeCase(entityName.toLowerCase());
+
+  await showQuickPickMethods(allCheckboxes, snakeCaseEntityName).then(methods => {
+    allCheckboxes.forEach(checkBox => {
+      checkBox.checked = false;
+    });
+    methods?.forEach(methodQuickPick => {
+      allCheckboxes.forEach(methodCheckbox => {
+        if (methodCheckbox.methodName.trim() === methodQuickPick.label.trim()) {
+          methodCheckbox.checked = true;
+        }
+      });
+    });
   }
+  );
 
   const pascalCaseEntityName = changeCase.pascalCase(entityName.toLowerCase());
   try {
-    await generateAllCode(entityName, targetDirectory, typeVariableID);
+    await generateAllCode(entityName, targetDirectory, typeVariableID, allCheckboxes);
     window.showInformationMessage(
       `Exito! Código ${pascalCaseEntityName} generado correctamente`
     );
@@ -73,7 +94,7 @@ function promptForTypeVariable(): Thenable<string | undefined> {
   return window.showInputBox(entityNamePromptOptions);
 }
 
-async function generateAllCode(entityName: string, targetDirectory: string, typeVariableID: string) {
+async function generateAllCode(entityName: string, targetDirectory: string, typeVariableID: string, methodsSelected: Array<Checkbox>) {
   if (!existsSync(`${targetDirectory}/entities`)) {
     await createDirectory(`${targetDirectory}/entities`);
   }
@@ -90,15 +111,43 @@ async function generateAllCode(entityName: string, targetDirectory: string, type
     await createDirectory(`${targetDirectory}/services/impl`);
   }
 
+  const data: Data = new Data({
+    entityName: entityName,
+    targetDirectory: targetDirectory,
+    typeVariableID: typeVariableID,
+    methodsSelected: methodsSelected,
+  });
   await Promise.all([
-    createEntity(entityName, targetDirectory, typeVariableID),
-    createIService(entityName, targetDirectory, typeVariableID),
-    createService(entityName, targetDirectory, typeVariableID),
-    createController(entityName, targetDirectory, typeVariableID),
-    createRepository(entityName, targetDirectory, typeVariableID),
+    createEntity(data),
+    createIService(data),
+    createService(data),
+    createController(data),
+    createRepository(data),
   ]);
 }
 
+
+
+const showQuickPickMethods = (checkboxes: Checkbox[], snakeCaseEntityName: string) => {
+  const pickItems: QuickPickItem[] = checkboxes.map(checkbox => {
+    return {
+      description: checkbox.description.replace('__ENTITY__', snakeCaseEntityName),
+      picked: checkbox.checked,
+      label: checkbox.methodName.trim(),
+    } as QuickPickItem;
+  }
+  );
+
+  return window.showQuickPick(
+    pickItems,
+    {
+      placeHolder: 'Seleccione métodos',
+      ignoreFocusOut: false,
+      matchOnDescription: true,
+      canPickMany: true,
+    }
+  );
+};
 
 
 
