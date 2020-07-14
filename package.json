@@ -10,15 +10,14 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:spring-boot-base-code-generator.generateCode"
+		"*"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
 		"commands": [
 			{
 				"command": "spring-boot-base-code-generator.generateCode",
-				"title": "Skaberen: Generate code",
-				"icon": "assets/logo.png"
+				"title": "Skaberen: Generate base code"
 			}
 		],
 		"menus": {
