@@ -20,11 +20,24 @@ export const generateCode = async (uri: Uri) => {
     return;
   }
 
+  let typeVariableID = await window.showQuickPick(['int', 'long', 'String', 'otro'], {
+    placeHolder: 'Tipo de variable del identificador',
+    // onDidSelectItem: item => window.showInformationMessage(`Focus ${++i}: ${item}`)
+  });
+
+  if (typeVariableID === 'otro' || typeVariableID === undefined) {
+    typeVariableID = await promptForTypeVariable();
+    if (lodash.isNil(typeVariableID) || typeVariableID.trim() === "") {
+      window.showErrorMessage("El tipo de variable no es válido");
+      return;
+    }
+  }
+
   let targetDirectory;
   if (lodash.isNil(lodash.get(uri, "fsPath")) || !lstatSync(uri.fsPath).isDirectory()) {
     targetDirectory = await promptForTargetDirectory();
     if (lodash.isNil(targetDirectory)) {
-      window.showErrorMessage("Por favor seleccione un directorio valido");
+      window.showErrorMessage("Por favor seleccione un directorio válido");
       return;
     }
   } else {
@@ -33,7 +46,7 @@ export const generateCode = async (uri: Uri) => {
 
   const pascalCaseEntityName = changeCase.pascalCase(entityName.toLowerCase());
   try {
-    await generateAllCode(entityName, targetDirectory);
+    await generateAllCode(entityName, targetDirectory, typeVariableID);
     window.showInformationMessage(
       `Exito! Código ${pascalCaseEntityName} generado correctamente`
     );
@@ -52,7 +65,15 @@ function promptForEntityName(): Thenable<string | undefined> {
   return window.showInputBox(entityNamePromptOptions);
 }
 
-async function generateAllCode(entityName: string, targetDirectory: string) {
+function promptForTypeVariable(): Thenable<string | undefined> {
+  const entityNamePromptOptions: InputBoxOptions = {
+    prompt: "Tipo de variable del identificador",
+    placeHolder: "Ej: long",
+  };
+  return window.showInputBox(entityNamePromptOptions);
+}
+
+async function generateAllCode(entityName: string, targetDirectory: string, typeVariableID: string) {
   if (!existsSync(`${targetDirectory}/entities`)) {
     await createDirectory(`${targetDirectory}/entities`);
   }
@@ -70,11 +91,11 @@ async function generateAllCode(entityName: string, targetDirectory: string) {
   }
 
   await Promise.all([
-    createEntity(entityName, targetDirectory),
-    createIService(entityName, targetDirectory),
-    createService(entityName, targetDirectory),
-    createController(entityName, targetDirectory),
-    createRepository(entityName, targetDirectory),
+    createEntity(entityName, targetDirectory, typeVariableID),
+    createIService(entityName, targetDirectory, typeVariableID),
+    createService(entityName, targetDirectory, typeVariableID),
+    createController(entityName, targetDirectory, typeVariableID),
+    createRepository(entityName, targetDirectory, typeVariableID),
   ]);
 }
 

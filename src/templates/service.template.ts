@@ -1,6 +1,14 @@
 import * as changeCase from 'change-case';
 
-export function getServiceTemplate(serviceName: string, packageService: string, packageIService: string, packageEntity: string, packageRepository: string): string {
+export function getServiceTemplate(
+  serviceName: string,
+  packageService: string,
+  packageIService: string,
+  packageEntity: string,
+  packageRepository: string,
+  typeVariableID: string,
+): string {
+
   const pascalCaseServiceName = changeCase.pascalCase(serviceName.toLowerCase());
   const snakeCaseServiceName = changeCase.snakeCase(serviceName.toLowerCase());
   return `package ${packageService};
@@ -25,7 +33,7 @@ export function getServiceTemplate(serviceName: string, packageService: string, 
     ${pascalCaseServiceName}Repository ${snakeCaseServiceName}Repository;
   
     @Override
-    public ResultadoProc<${pascalCaseServiceName}> findById(final String ${snakeCaseServiceName}Id) {
+    public ResultadoProc<${pascalCaseServiceName}> findById(final ${typeVariableID} ${snakeCaseServiceName}Id) {
       final ResultadoProc.Builder<${pascalCaseServiceName}> salida = new ResultadoProc.Builder<${pascalCaseServiceName}>();
       try {
         final ${pascalCaseServiceName} ${snakeCaseServiceName} = ${snakeCaseServiceName}Repository.findById(${snakeCaseServiceName}Id).orElse(null);

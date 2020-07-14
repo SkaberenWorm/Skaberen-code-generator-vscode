@@ -1,6 +1,12 @@
 import * as changeCase from 'change-case';
 
-export function getEntityTemplate(entityName: string, packageEntity: string, serialVersionUID: string): string {
+export function getEntityTemplate(
+  entityName: string,
+  packageEntity: string,
+  serialVersionUID: string,
+  typeVariableID: string
+): string {
+
   const pascalCaseEntityName = changeCase.pascalCase(entityName.toLowerCase());
   const snakeCaseEntityName = changeCase.snakeCase(entityName.toLowerCase());
   return `package ${packageEntity};
@@ -23,7 +29,7 @@ public class ${pascalCaseEntityName} implements Serializable {
 	private static final long serialVersionUID = ${serialVersionUID};
 
 	@Id
-	private String id;
+	private ${typeVariableID} id;
 
 }
 `;

@@ -1,6 +1,12 @@
 import * as changeCase from 'change-case';
 
-export function getIServiceTemplate(iServiceName: string, packageIService: string, packageEntity: string): string {
+export function getIServiceTemplate(
+  iServiceName: string,
+  packageIService: string,
+  packageEntity: string,
+  typeVariableID: string
+): string {
+
   const pascalCaseIServiceName = changeCase.pascalCase(iServiceName.toLowerCase());
   const snakeCaseIServiceName = changeCase.snakeCase(iServiceName.toLowerCase());
   return `package ${packageIService};
@@ -13,7 +19,7 @@ import ${packageEntity}.${pascalCaseIServiceName};
 
 public interface I${pascalCaseIServiceName}Service {
 
-  ResultadoProc<${pascalCaseIServiceName}> findById(String ${snakeCaseIServiceName}Id);
+  ResultadoProc<${pascalCaseIServiceName}> findById(${typeVariableID} ${snakeCaseIServiceName}Id);
 
   ResultadoProc<${pascalCaseIServiceName}> save(${pascalCaseIServiceName} ${snakeCaseIServiceName});
 

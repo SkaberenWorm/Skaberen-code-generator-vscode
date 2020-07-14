@@ -1,9 +1,16 @@
 import * as changeCase from 'change-case';
 
-export function getControllerTemplate(controllerName: string, packageController: string, packageEntity: string, packageIService: string): string {
-  const pascalCaseControllerName = changeCase.pascalCase(controllerName.toLowerCase());
-  const snakeCaseControllerName = changeCase.snakeCase(controllerName.toLowerCase());
-  return `package ${packageController};
+export function getControllerTemplate(
+	controllerName: string,
+	packageController: string,
+	packageEntity: string,
+	packageIService: string,
+	typeVariableID: string
+): string {
+
+	const pascalCaseControllerName = changeCase.pascalCase(controllerName.toLowerCase());
+	const snakeCaseControllerName = changeCase.snakeCase(controllerName.toLowerCase());
+	return `package ${packageController};
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -31,7 +38,7 @@ public class ${pascalCaseControllerName}RestController {
   I${pascalCaseControllerName}Service ${snakeCaseControllerName}Service;
   
   @GetMapping("/{id}")
-	public ResponseEntity<ResultadoProc<${pascalCaseControllerName}>> findById(@PathVariable("id") String ${snakeCaseControllerName}Id) {
+	public ResponseEntity<ResultadoProc<${pascalCaseControllerName}>> findById(@PathVariable("id") ${typeVariableID} ${snakeCaseControllerName}Id) {
 		ResultadoProc<${pascalCaseControllerName}> salida = ${snakeCaseControllerName}Service.findById(${snakeCaseControllerName}Id);
 		return new ResponseEntity<ResultadoProc<${pascalCaseControllerName}>>(salida, HttpStatus.OK);
 	}

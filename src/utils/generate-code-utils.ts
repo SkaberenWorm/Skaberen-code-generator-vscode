@@ -8,12 +8,8 @@ import { getRepositoryTemplate } from '../templates/repository.template';
 import { getServiceTemplate } from '../templates/service.template';
 import { generatedVersionUID } from './utils';
 
-/**
- * Genera el archivo java con el código base de una entidad
- * @param entityName Nombre de la entidad
- * @param targetDirectory Path del package base Ej: /Users/skaberen/Documents/Desarrollo/demo/src/main/java/cl/uft/demo
- */
-export function createEntity(entityName: string, targetDirectory: string) {
+
+export function createEntity(entityName: string, targetDirectory: string, typeVariableID: string) {
     const pascalCaseEntityName = changeCase.pascalCase(entityName.toLowerCase());
     const targetPath = `${targetDirectory}/entities/${pascalCaseEntityName}.java`;
     const packageEntity = `${targetDirectory.substring(targetDirectory.indexOf("src/main/java/"), targetDirectory.length)}.entities`.replace(new RegExp('/', 'g'), '.').replace('src.main.java.', '');
@@ -23,7 +19,7 @@ export function createEntity(entityName: string, targetDirectory: string) {
     return new Promise(async (resolve, reject) => {
         writeFile(
             targetPath,
-            getEntityTemplate(entityName, packageEntity, generatedVersionUID()),
+            getEntityTemplate(entityName, packageEntity, generatedVersionUID(), typeVariableID),
             "utf8",
             (error) => {
                 if (error) {
@@ -36,7 +32,7 @@ export function createEntity(entityName: string, targetDirectory: string) {
     });
 }
 
-export function createRepository(entityName: string, targetDirectory: string) {
+export function createRepository(entityName: string, targetDirectory: string, typeVariableID: string) {
     const pascalCaseEntityName = changeCase.pascalCase(entityName.toLowerCase());
     const targetPath = `${targetDirectory}/repositories/${pascalCaseEntityName}Repository.java`;
     const packageRepository = `${targetDirectory.substring(targetDirectory.indexOf("src/main/java/"), targetDirectory.length)}.repositories`.replace(new RegExp('/', 'g'), '.').replace('src.main.java.', '');
@@ -47,7 +43,7 @@ export function createRepository(entityName: string, targetDirectory: string) {
     return new Promise(async (resolve, reject) => {
         writeFile(
             targetPath,
-            getRepositoryTemplate(entityName, packageRepository, packageEntity),
+            getRepositoryTemplate(entityName, packageRepository, packageEntity, typeVariableID),
             "utf8",
             (error) => {
                 if (error) {
@@ -60,7 +56,7 @@ export function createRepository(entityName: string, targetDirectory: string) {
     });
 }
 
-export function createIService(entityName: string, targetDirectory: string) {
+export function createIService(entityName: string, targetDirectory: string, typeVariableID: string) {
     const pascalCaseEntityName = changeCase.pascalCase(entityName.toLowerCase());
     const targetPath = `${targetDirectory}/services/I${pascalCaseEntityName}Service.java`;
     const packageIService = `${targetDirectory.substring(targetDirectory.indexOf("src/main/java/"), targetDirectory.length)}.services`.replace(new RegExp('/', 'g'), '.').replace('src.main.java.', '');
@@ -71,7 +67,7 @@ export function createIService(entityName: string, targetDirectory: string) {
     return new Promise(async (resolve, reject) => {
         writeFile(
             targetPath,
-            getIServiceTemplate(entityName, packageIService, packageEntity),
+            getIServiceTemplate(entityName, packageIService, packageEntity, typeVariableID),
             "utf8",
             (error) => {
                 if (error) {
@@ -84,7 +80,7 @@ export function createIService(entityName: string, targetDirectory: string) {
     });
 }
 
-export function createService(entityName: string, targetDirectory: string) {
+export function createService(entityName: string, targetDirectory: string, typeVariableID: string) {
     const pascalCaseEntityName = changeCase.pascalCase(entityName.toLowerCase());
     const targetPath = `${targetDirectory}/services/impl/${pascalCaseEntityName}Service.java`;
     const packageService = `${targetDirectory.substring(targetDirectory.indexOf("src/main/java/"), targetDirectory.length)}.services/impl`.replace(new RegExp('/', 'g'), '.').replace('src.main.java.', '');
@@ -97,7 +93,7 @@ export function createService(entityName: string, targetDirectory: string) {
     return new Promise(async (resolve, reject) => {
         writeFile(
             targetPath,
-            getServiceTemplate(entityName, packageService, packageIService, packageEntity, packageRepository),
+            getServiceTemplate(entityName, packageService, packageIService, packageEntity, packageRepository, typeVariableID),
             "utf8",
             (error) => {
                 if (error) {
@@ -111,7 +107,7 @@ export function createService(entityName: string, targetDirectory: string) {
 }
 
 
-export function createController(entityName: string, targetDirectory: string) {
+export function createController(entityName: string, targetDirectory: string, typeVariableID: string) {
     const pascalCaseEntityName = changeCase.pascalCase(entityName.toLowerCase());
     const targetPath = `${targetDirectory}/controllers/${pascalCaseEntityName}RestController.java`;
     const packageController = `${targetDirectory.substring(targetDirectory.indexOf("src/main/java/"), targetDirectory.length)}.controllers`.replace(new RegExp('/', 'g'), '.').replace('src.main.java.', '');
@@ -123,7 +119,7 @@ export function createController(entityName: string, targetDirectory: string) {
     return new Promise(async (resolve, reject) => {
         writeFile(
             targetPath,
-            getControllerTemplate(entityName, packageController, packageEntity, packageIService),
+            getControllerTemplate(entityName, packageController, packageEntity, packageIService, typeVariableID),
             "utf8",
             (error) => {
                 if (error) {
