@@ -1,7 +1,7 @@
 import * as changeCase from 'change-case';
 import { existsSync, writeFile } from 'fs';
 
-import Data from '../models/data';
+import ParamMethodJava from '../models/param-method-java';
 import { getControllerTemplate } from '../templates/java-base-uft/controller.template';
 import { getEntityTemplate } from '../templates/java-base-uft/entity.template';
 import { getIServiceTemplate } from '../templates/java-base-uft/iservice.template';
@@ -10,10 +10,10 @@ import { getServiceTemplate } from '../templates/java-base-uft/service.template'
 import { generatedVersionUID } from './utils';
 
 
-export function createEntity(data: Data) {
+export function createEntity(param: ParamMethodJava) {
 
-    const entityName = data.entityName;
-    const targetDirectory = data.targetDirectory;
+    const entityName = param.entityName;
+    const targetDirectory = param.targetDirectory;
 
     const pascalCaseEntityName = changeCase.pascalCase(entityName.toLowerCase());
     const targetPath = `${targetDirectory}/entities/${pascalCaseEntityName}.java`;
@@ -29,7 +29,7 @@ export function createEntity(data: Data) {
                 entityName,
                 packageEntity,
                 generatedVersionUID(),
-                data.typeVariableID,
+                param.typeVariableID,
             ),
             "utf8",
             (error) => {
@@ -43,10 +43,10 @@ export function createEntity(data: Data) {
     });
 }
 
-export function createRepository(data: Data) {
+export function createRepository(param: ParamMethodJava) {
 
-    const entityName = data.entityName;
-    const targetDirectory = data.targetDirectory;
+    const entityName = param.entityName;
+    const targetDirectory = param.targetDirectory;
 
     const pascalCaseEntityName = changeCase.pascalCase(entityName.toLowerCase());
     const targetPath = `${targetDirectory}/repositories/${pascalCaseEntityName}Repository.java`;
@@ -62,8 +62,8 @@ export function createRepository(data: Data) {
                 entityName,
                 packageRepository,
                 packageEntity,
-                data.typeVariableID,
-                data.methodsSelected),
+                param.typeVariableID,
+                param.methodsSelected),
             "utf8",
             (error) => {
                 if (error) {
@@ -76,10 +76,10 @@ export function createRepository(data: Data) {
     });
 }
 
-export function createIService(data: Data) {
+export function createIService(param: ParamMethodJava) {
 
-    const entityName = data.entityName;
-    const targetDirectory = data.targetDirectory;
+    const entityName = param.entityName;
+    const targetDirectory = param.targetDirectory;
 
     const pascalCaseEntityName = changeCase.pascalCase(entityName.toLowerCase());
     const targetPath = `${targetDirectory}/services/I${pascalCaseEntityName}Service.java`;
@@ -95,8 +95,8 @@ export function createIService(data: Data) {
                 entityName,
                 packageIService,
                 packageEntity,
-                data.typeVariableID,
-                data.methodsSelected),
+                param.typeVariableID,
+                param.methodsSelected),
             "utf8",
             (error) => {
                 if (error) {
@@ -109,10 +109,10 @@ export function createIService(data: Data) {
     });
 }
 
-export function createService(data: Data) {
+export function createService(param: ParamMethodJava) {
 
-    const entityName = data.entityName;
-    const targetDirectory = data.targetDirectory;
+    const entityName = param.entityName;
+    const targetDirectory = param.targetDirectory;
 
     const pascalCaseEntityName = changeCase.pascalCase(entityName.toLowerCase());
     const targetPath = `${targetDirectory}/services/impl/${pascalCaseEntityName}Service.java`;
@@ -132,8 +132,8 @@ export function createService(data: Data) {
                 packageIService,
                 packageEntity,
                 packageRepository,
-                data.typeVariableID,
-                data.methodsSelected),
+                param.typeVariableID,
+                param.methodsSelected),
             "utf8",
             (error) => {
                 if (error) {
@@ -147,10 +147,10 @@ export function createService(data: Data) {
 }
 
 
-export function createController(data: Data) {
+export function createController(param: ParamMethodJava) {
 
-    const entityName = data.entityName;
-    const targetDirectory = data.targetDirectory;
+    const entityName = param.entityName;
+    const targetDirectory = param.targetDirectory;
 
     const pascalCaseEntityName = changeCase.pascalCase(entityName.toLowerCase());
     const targetPath = `${targetDirectory}/controllers/${pascalCaseEntityName}RestController.java`;
@@ -168,8 +168,8 @@ export function createController(data: Data) {
                 packageController,
                 packageEntity,
                 packageIService,
-                data.typeVariableID,
-                data.methodsSelected,
+                param.typeVariableID,
+                param.methodsSelected,
             ),
             "utf8",
             (error) => {

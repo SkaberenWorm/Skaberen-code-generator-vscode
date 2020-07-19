@@ -17,14 +17,23 @@
 		"commands": [
 			{
 				"command": "spring-boot-base-code-generator.generateCode",
-				"title": "Skaberen: Generate base code"
+				"title": "Skaberen Java: Generate base code"
+			},
+			{
+				"command": "spring-boot-base-code-generator.generateCodeNgStore",
+				"title": "Skaberen Angular: Generate store code"
 			}
 		],
 		"menus": {
 			"explorer/context": [
 				{
 					"command": "spring-boot-base-code-generator.generateCode",
-					"group": "SkaberenGroup",
+					"group": "SkaberenGroupJava",
+					"when": "explorerResourceIsFolder"
+				},
+				{
+					"command": "spring-boot-base-code-generator.generateCodeNgStore",
+					"group": "SkaberenGroupAngular",
 					"when": "explorerResourceIsFolder"
 				}
 			]

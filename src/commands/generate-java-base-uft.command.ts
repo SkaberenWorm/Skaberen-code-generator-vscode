@@ -4,18 +4,18 @@ import * as lodash from 'lodash';
 import { InputBoxOptions, QuickPickItem, Uri, window } from 'vscode';
 
 import Checkbox from '../models/checkbox';
-import Data from '../models/data';
 import { methods } from '../models/method-actions';
+import ParamMethodJava from '../models/param-method-java';
 import {
   createController,
   createEntity,
   createIService,
   createRepository,
   createService,
-} from '../utils/generate-code-utils';
+} from '../utils/generate-code-java-uft.utils';
 import { createDirectory, promptForTargetDirectory } from '../utils/utils';
 
-export const generateCode = async (uri: Uri) => {
+export const generateCodeJavaBase = async (uri: Uri) => {
 
   let targetDirectory;
   if (lodash.isNil(lodash.get(uri, "fsPath")) || !lstatSync(uri.fsPath).isDirectory()) {
@@ -111,7 +111,7 @@ async function generateAllCode(entityName: string, targetDirectory: string, type
     await createDirectory(`${targetDirectory}/services/impl`);
   }
 
-  const data: Data = new Data({
+  const data: ParamMethodJava = new ParamMethodJava({
     entityName: entityName,
     targetDirectory: targetDirectory,
     typeVariableID: typeVariableID,

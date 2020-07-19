@@ -1,6 +1,6 @@
 import Checkbox from './checkbox';
 
-export default class Data {
+export default class ParamMethodJava {
     entityName: string = '';
     targetDirectory: string = '';
     typeVariableID: string = '';
