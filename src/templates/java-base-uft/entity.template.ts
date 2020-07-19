@@ -4,7 +4,7 @@ export function getEntityTemplate(
   entityName: string,
   packageEntity: string,
   serialVersionUID: string,
-  typeVariableID: string
+  typeVariableID: string,
 ): string {
 
   const pascalCaseEntityName = changeCase.pascalCase(entityName.toLowerCase());

@@ -1,1 +1,1 @@
-export * from './generate-code.command';
+export * from './generate-java-base-uft.command';

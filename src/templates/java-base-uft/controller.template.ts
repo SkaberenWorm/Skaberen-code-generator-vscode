@@ -1,7 +1,7 @@
 import * as changeCase from 'change-case';
 
-import Checkbox from '../models/checkbox';
-import { METHOD } from '../models/method-actions';
+import Checkbox from '../../models/checkbox';
+import { METHOD } from '../../models/method-actions';
 
 export function getControllerTemplate(
 	controllerName: string,
@@ -40,8 +40,7 @@ public class ${pascalCaseControllerName}RestController {
 
 	@Autowired
 	I${pascalCaseControllerName}Service ${snakeCaseControllerName}Service;
-
-	${insertMethods(pascalCaseControllerName, snakeCaseControllerName, typeVariableID, methods)}
+${insertMethods(pascalCaseControllerName, snakeCaseControllerName, typeVariableID, methods)}
 }`;
 
 	return template;
@@ -53,28 +52,28 @@ function insertMethods(pascalCaseControllerName: string, snakeCaseControllerName
 		if (method.checked) {
 			switch (method.method) {
 				case METHOD.findById:
-					code += insertMethodFindById(pascalCaseControllerName, snakeCaseControllerName, typeVariableID);
 					code += '\n\n\t';
+					code += insertMethodFindById(pascalCaseControllerName, snakeCaseControllerName, typeVariableID);
 					break;
 				case METHOD.findAllPaginatedBySearch:
-					code += insertMethodfindAllPaginatedBySearch(pascalCaseControllerName, snakeCaseControllerName);
 					code += '\n\n\t';
+					code += insertMethodfindAllPaginatedBySearch(pascalCaseControllerName, snakeCaseControllerName);
 					break;
 				case METHOD.save:
-					code += insertMethodSave(pascalCaseControllerName, snakeCaseControllerName);
 					code += '\n\n\t';
+					code += insertMethodSave(pascalCaseControllerName, snakeCaseControllerName);
 					break;
 				case METHOD.update:
-					code += insertMethodUpdate(pascalCaseControllerName, snakeCaseControllerName);
 					code += '\n\n\t';
+					code += insertMethodUpdate(pascalCaseControllerName, snakeCaseControllerName);
 					break;
 				case METHOD.changeState:
-					code += insertMethodChangeState(pascalCaseControllerName, snakeCaseControllerName);
 					code += '\n\n\t';
+					code += insertMethodChangeState(pascalCaseControllerName, snakeCaseControllerName);
 					break;
 				case METHOD.delete:
-					code += insertMethodDelete(pascalCaseControllerName, snakeCaseControllerName);
 					code += '\n\n\t';
+					code += insertMethodDelete(pascalCaseControllerName, snakeCaseControllerName);
 					break;
 			}
 		}
@@ -127,8 +126,3 @@ function insertMethodChangeState(pascalCaseControllerName: string, snakeCaseCont
 function insertMethodDelete(pascalCaseControllerName: string, snakeCaseControllerName: string) {
 	return ``;
 }
-
-
-
-
-

@@ -2,11 +2,11 @@ import * as changeCase from 'change-case';
 import { existsSync, writeFile } from 'fs';
 
 import Data from '../models/data';
-import { getControllerTemplate } from '../templates/controller.template';
-import { getEntityTemplate } from '../templates/entity.template';
-import { getIServiceTemplate } from '../templates/iservice.template';
-import { getRepositoryTemplate } from '../templates/repository.template';
-import { getServiceTemplate } from '../templates/service.template';
+import { getControllerTemplate } from '../templates/java-base-uft/controller.template';
+import { getEntityTemplate } from '../templates/java-base-uft/entity.template';
+import { getIServiceTemplate } from '../templates/java-base-uft/iservice.template';
+import { getRepositoryTemplate } from '../templates/java-base-uft/repository.template';
+import { getServiceTemplate } from '../templates/java-base-uft/service.template';
 import { generatedVersionUID } from './utils';
 
 
@@ -14,7 +14,6 @@ export function createEntity(data: Data) {
 
     const entityName = data.entityName;
     const targetDirectory = data.targetDirectory;
-    const typeVariableID = data.typeVariableID;
 
     const pascalCaseEntityName = changeCase.pascalCase(entityName.toLowerCase());
     const targetPath = `${targetDirectory}/entities/${pascalCaseEntityName}.java`;
@@ -26,7 +25,12 @@ export function createEntity(data: Data) {
     return new Promise(async (resolve, reject) => {
         writeFile(
             targetPath,
-            getEntityTemplate(entityName, packageEntity, generatedVersionUID(), typeVariableID),
+            getEntityTemplate(
+                entityName,
+                packageEntity,
+                generatedVersionUID(),
+                data.typeVariableID,
+            ),
             "utf8",
             (error) => {
                 if (error) {
@@ -43,7 +47,6 @@ export function createRepository(data: Data) {
 
     const entityName = data.entityName;
     const targetDirectory = data.targetDirectory;
-    const typeVariableID = data.typeVariableID;
 
     const pascalCaseEntityName = changeCase.pascalCase(entityName.toLowerCase());
     const targetPath = `${targetDirectory}/repositories/${pascalCaseEntityName}Repository.java`;
@@ -55,7 +58,12 @@ export function createRepository(data: Data) {
     return new Promise(async (resolve, reject) => {
         writeFile(
             targetPath,
-            getRepositoryTemplate(entityName, packageRepository, packageEntity, typeVariableID),
+            getRepositoryTemplate(
+                entityName,
+                packageRepository,
+                packageEntity,
+                data.typeVariableID,
+                data.methodsSelected),
             "utf8",
             (error) => {
                 if (error) {
@@ -72,7 +80,6 @@ export function createIService(data: Data) {
 
     const entityName = data.entityName;
     const targetDirectory = data.targetDirectory;
-    const typeVariableID = data.typeVariableID;
 
     const pascalCaseEntityName = changeCase.pascalCase(entityName.toLowerCase());
     const targetPath = `${targetDirectory}/services/I${pascalCaseEntityName}Service.java`;
@@ -84,7 +91,12 @@ export function createIService(data: Data) {
     return new Promise(async (resolve, reject) => {
         writeFile(
             targetPath,
-            getIServiceTemplate(entityName, packageIService, packageEntity, typeVariableID),
+            getIServiceTemplate(
+                entityName,
+                packageIService,
+                packageEntity,
+                data.typeVariableID,
+                data.methodsSelected),
             "utf8",
             (error) => {
                 if (error) {
@@ -101,7 +113,6 @@ export function createService(data: Data) {
 
     const entityName = data.entityName;
     const targetDirectory = data.targetDirectory;
-    const typeVariableID = data.typeVariableID;
 
     const pascalCaseEntityName = changeCase.pascalCase(entityName.toLowerCase());
     const targetPath = `${targetDirectory}/services/impl/${pascalCaseEntityName}Service.java`;
@@ -115,7 +126,14 @@ export function createService(data: Data) {
     return new Promise(async (resolve, reject) => {
         writeFile(
             targetPath,
-            getServiceTemplate(entityName, packageService, packageIService, packageEntity, packageRepository, typeVariableID),
+            getServiceTemplate(
+                entityName,
+                packageService,
+                packageIService,
+                packageEntity,
+                packageRepository,
+                data.typeVariableID,
+                data.methodsSelected),
             "utf8",
             (error) => {
                 if (error) {
