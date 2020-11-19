@@ -1,5 +1,3 @@
-import * as changeCase from 'change-case';
-
 import Checkbox from '../../models/checkbox';
 import { METHOD } from '../../models/method-actions';
 
@@ -11,7 +9,6 @@ export function getRepositoryTemplate(
   methods: Array<Checkbox>,
 ): string {
 
-  const pascalCaseRepositoryName = changeCase.pascalCase(repositoryName.toLowerCase());
   let ID = 'NO_DEFINED';
   switch (typeVariableID) {
     case 'int':
@@ -35,11 +32,11 @@ export function getRepositoryTemplate(
   import org.springframework.data.jpa.repository.Query;
   import org.springframework.stereotype.Repository;
   
-  import ${packageEntity}.${pascalCaseRepositoryName};
+  import ${packageEntity}.${repositoryName};
   
   @Repository
-  public interface ${pascalCaseRepositoryName}Repository extends JpaRepository<${pascalCaseRepositoryName}, ${ID}> {
-  ${insertMethods(pascalCaseRepositoryName, methods)}
+  public interface ${repositoryName}Repository extends JpaRepository<${repositoryName}, ${ID}> {
+  ${insertMethods(repositoryName, methods)}
   }
 `;
 }

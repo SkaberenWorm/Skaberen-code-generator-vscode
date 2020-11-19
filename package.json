@@ -21,7 +21,7 @@
 			},
 			{
 				"command": "spring-boot-base-code-generator.generateCodeNgStore",
-				"title": "Skaberen Angular: Generate store code"
+				"title": "Skaberen Redux: Generate store code"
 			}
 		],
 		"menus": {

@@ -7,7 +7,6 @@ export function generatedVersionUID(): string {
     generatedVersionUID += Math.random().toString().replace(new RegExp('0.', 'g'), '');
     generatedVersionUID += Math.random().toString().replace(new RegExp('0.', 'g'), '');
     generatedVersionUID = generatedVersionUID.substring(0, 18) + 'L';
-    console.log(generatedVersionUID);
     return generatedVersionUID;
 }
 
@@ -35,4 +34,22 @@ export async function promptForTargetDirectory(): Promise<string | undefined> {
         }
         return uri[0].fsPath;
     });
+}
+
+export function snakeCaseForAnnotationTable(entityName: string) {
+    let salida = '' + entityName?.replace(/([a-z])([A-Z])/g, '$1 $2');
+    salida = salida.replace(new RegExp(' ', 'g'), '_').toLowerCase();
+    return salida;
+}
+
+export function snakeCaseRequestMapping(entityName: string) {
+    let salida = '' + entityName?.replace(/([a-z])([A-Z])/g, '$1 $2');
+    salida = salida.replace(new RegExp(' ', 'g'), '-').toLowerCase();
+    return salida;
+}
+
+
+
+export function toLowerCaseFirstLetter(word: string) {
+    return word[0].toLowerCase() + word.slice(1);
 }

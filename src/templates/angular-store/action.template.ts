@@ -11,6 +11,7 @@ export function getActionsTemplate(
 
   return `import { createAction, props } from '@ngrx/store';
 //import { SearchPagination } from 'src/app/commons/interfaces/search.pagination';
+import { ${modelName} } from 'src/app/commons/models/${fileName}.model';
 ${insertMethods(typePrefix, modelName, methods)}
   `;
 }
@@ -54,16 +55,16 @@ function insertMethods(typePrefix: string, modelName: string, methods: Array<Che
 
 
 function insertMethodFindById(typePrefix: string, modelName: string) {
-  return `export const busar${modelName} = createAction(
-    '[${typePrefix}] busar por ID',
+  return `export const buscar${modelName} = createAction(
+    '[${typePrefix}] buscar por ID',
     props<{ searchPagination: SearchPagination<string> }>()
 );
-export const busar${modelName}Success = createAction(
-    '[${typePrefix}] busar por ID success',
+export const buscar${modelName}Success = createAction(
+    '[${typePrefix}] buscar por ID success',
     props<{ respuesta: ${modelName} }>()
 );
-export const busar${modelName}Fail = createAction(
-    '[${typePrefix}] busar por ID fail',
+export const buscar${modelName}Fail = createAction(
+    '[${typePrefix}] buscar por ID fail',
     props<{ mensaje: string }>()
 );`;
 }
@@ -90,7 +91,7 @@ function insertMethodSave(typePrefix: string, modelName: string) {
 );
 export const guardar${modelName}Success = createAction(
     '[${typePrefix}] guardar ${modelName} success',
-    props<{ respuesta: ${modelName} }>()
+    props<{ respuesta: ${modelName} , mensaje: string}>()
 );
 export const guardar${modelName}Fail = createAction(
     '[${typePrefix}] guardar ${modelName} fail',
@@ -105,7 +106,7 @@ function insertMethodUpdate(typePrefix: string, modelName: string) {
 );
 export const actualizar${modelName}Success = createAction(
     '[${typePrefix}] Actualizar ${modelName} success',
-    props<{ respuesta: ${modelName} }>()
+    props<{ respuesta: ${modelName}, mensaje: string }>()
 );
 export const actualizar${modelName}Fail = createAction(
     '[${typePrefix}] Actualizar ${modelName} fail',

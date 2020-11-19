@@ -34,7 +34,7 @@ export const generateCodeAngularStore = async (uri: Uri) => {
 
   const allCheckboxes: Array<Checkbox> = methods;
 
-  await showQuickPickMethods(allCheckboxes, modelName.toLowerCase()).then(methods => {
+  await showQuickPickMethods(allCheckboxes, modelName).then(methods => {
     allCheckboxes.forEach(checkBox => {
       checkBox.checked = false;
     });

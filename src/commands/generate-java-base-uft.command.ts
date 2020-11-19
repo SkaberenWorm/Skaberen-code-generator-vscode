@@ -1,4 +1,3 @@
-import * as changeCase from 'change-case';
 import { existsSync, lstatSync } from 'fs';
 import * as lodash from 'lodash';
 import { InputBoxOptions, QuickPickItem, Uri, window } from 'vscode';
@@ -21,7 +20,7 @@ export const generateCodeJavaBase = async (uri: Uri) => {
   if (lodash.isNil(lodash.get(uri, "fsPath")) || !lstatSync(uri.fsPath).isDirectory()) {
     targetDirectory = await promptForTargetDirectory();
     if (lodash.isNil(targetDirectory)) {
-      window.showErrorMessage("Por favor seleccione un directorio válido");
+      window.showErrorMessage("Seleccione un directorio válido");
       return;
     }
   } else {
@@ -36,7 +35,6 @@ export const generateCodeJavaBase = async (uri: Uri) => {
 
   let typeVariableID = await window.showQuickPick(['int', 'long', 'String', 'otro'], {
     placeHolder: 'Tipo de variable del identificador',
-    // onDidSelectItem: item => window.showInformationMessage(`Focus ${++i}: ${item}`)
   });
 
   if (typeVariableID === 'otro' || typeVariableID === undefined) {
@@ -47,16 +45,14 @@ export const generateCodeJavaBase = async (uri: Uri) => {
     }
   }
 
-  // let methodsSelected: Array<Checkbox> = [];
-  const allCheckboxes: Array<Checkbox> = methods;
-  const snakeCaseEntityName = changeCase.snakeCase(entityName.toLowerCase());
+  const metodosChecboxes: Array<Checkbox> = methods;
 
-  await showQuickPickMethods(allCheckboxes, snakeCaseEntityName).then(methods => {
-    allCheckboxes.forEach(checkBox => {
+  await showQuickPickMethods(metodosChecboxes, entityName).then(methods => {
+    metodosChecboxes.forEach(checkBox => {
       checkBox.checked = false;
     });
     methods?.forEach(methodQuickPick => {
-      allCheckboxes.forEach(methodCheckbox => {
+      metodosChecboxes.forEach(methodCheckbox => {
         if (methodCheckbox.methodName.trim() === methodQuickPick.label.trim()) {
           methodCheckbox.checked = true;
         }
@@ -65,11 +61,10 @@ export const generateCodeJavaBase = async (uri: Uri) => {
   }
   );
 
-  const pascalCaseEntityName = changeCase.pascalCase(entityName.toLowerCase());
   try {
-    await generateAllCode(entityName, targetDirectory, typeVariableID, allCheckboxes);
+    await generateAllCode(entityName, targetDirectory, typeVariableID, metodosChecboxes);
     window.showInformationMessage(
-      `Exito! Código ${pascalCaseEntityName} generado correctamente`
+      `Exito! Código ${entityName} generado correctamente`
     );
   } catch (error) {
     window.showErrorMessage(
@@ -110,6 +105,9 @@ async function generateAllCode(entityName: string, targetDirectory: string, type
   if (!existsSync(`${targetDirectory}/services/impl`)) {
     await createDirectory(`${targetDirectory}/services/impl`);
   }
+  if (!existsSync(`${targetDirectory}/utils`)) {
+    await createDirectory(`${targetDirectory}/utils`);
+  }
 
   const data: ParamMethodJava = new ParamMethodJava({
     entityName: entityName,
@@ -128,10 +126,10 @@ async function generateAllCode(entityName: string, targetDirectory: string, type
 
 
 
-const showQuickPickMethods = (checkboxes: Checkbox[], snakeCaseEntityName: string) => {
+const showQuickPickMethods = (checkboxes: Checkbox[], entityName: string) => {
   const pickItems: QuickPickItem[] = checkboxes.map(checkbox => {
     return {
-      description: checkbox.description.replace('__ENTITY__', snakeCaseEntityName),
+      description: checkbox.description.replace('__ENTITY__', entityName),
       picked: checkbox.checked,
       label: checkbox.methodName.trim(),
     } as QuickPickItem;

@@ -1,4 +1,3 @@
-import * as changeCase from 'change-case';
 import { existsSync, writeFile } from 'fs';
 
 import ParamMethodJava from '../models/param-method-java';
@@ -15,12 +14,11 @@ export function createEntity(param: ParamMethodJava) {
     const entityName = param.entityName;
     const targetDirectory = param.targetDirectory;
 
-    const pascalCaseEntityName = changeCase.pascalCase(entityName.toLowerCase());
-    const targetPath = `${targetDirectory}/entities/${pascalCaseEntityName}.java`;
+    const targetPath = `${targetDirectory}/entities/${entityName}.java`;
     const packageEntity = `${targetDirectory.substring(targetDirectory.indexOf("src/main/java/"), targetDirectory.length)}.entities`.replace(new RegExp('/', 'g'), '.').replace('src.main.java.', '');
 
     if (existsSync(targetPath)) {
-        throw Error(`${pascalCaseEntityName}.java ya existe`);
+        throw Error(`${entityName}.java ya existe`);
     }
     return new Promise(async (resolve, reject) => {
         writeFile(
@@ -48,12 +46,12 @@ export function createRepository(param: ParamMethodJava) {
     const entityName = param.entityName;
     const targetDirectory = param.targetDirectory;
 
-    const pascalCaseEntityName = changeCase.pascalCase(entityName.toLowerCase());
-    const targetPath = `${targetDirectory}/repositories/${pascalCaseEntityName}Repository.java`;
+    // const pascalCaseEntityName = changeCase.pascalCase(entityName.toLowerCase());
+    const targetPath = `${targetDirectory}/repositories/${entityName}Repository.java`;
     const packageRepository = `${targetDirectory.substring(targetDirectory.indexOf("src/main/java/"), targetDirectory.length)}.repositories`.replace(new RegExp('/', 'g'), '.').replace('src.main.java.', '');
     const packageEntity = `${targetDirectory.substring(targetDirectory.indexOf("src/main/java/"), targetDirectory.length)}.entities`.replace(new RegExp('/', 'g'), '.').replace('src.main.java.', '');
     if (existsSync(targetPath)) {
-        throw Error(`${pascalCaseEntityName}Repository.java ya existe`);
+        throw Error(`${entityName}Repository.java ya existe`);
     }
     return new Promise(async (resolve, reject) => {
         writeFile(
@@ -81,12 +79,12 @@ export function createIService(param: ParamMethodJava) {
     const entityName = param.entityName;
     const targetDirectory = param.targetDirectory;
 
-    const pascalCaseEntityName = changeCase.pascalCase(entityName.toLowerCase());
-    const targetPath = `${targetDirectory}/services/I${pascalCaseEntityName}Service.java`;
+    // const pascalCaseEntityName = changeCase.pascalCase(entityName.toLowerCase());
+    const targetPath = `${targetDirectory}/services/I${entityName}Service.java`;
     const packageIService = `${targetDirectory.substring(targetDirectory.indexOf("src/main/java/"), targetDirectory.length)}.services`.replace(new RegExp('/', 'g'), '.').replace('src.main.java.', '');
     const packageEntity = `${targetDirectory.substring(targetDirectory.indexOf("src/main/java/"), targetDirectory.length)}.entities`.replace(new RegExp('/', 'g'), '.').replace('src.main.java.', '');
     if (existsSync(targetPath)) {
-        throw Error(`I${pascalCaseEntityName}Service.java ya existe`);
+        throw Error(`I${entityName}Service.java ya existe`);
     }
     return new Promise(async (resolve, reject) => {
         writeFile(
@@ -114,14 +112,14 @@ export function createService(param: ParamMethodJava) {
     const entityName = param.entityName;
     const targetDirectory = param.targetDirectory;
 
-    const pascalCaseEntityName = changeCase.pascalCase(entityName.toLowerCase());
-    const targetPath = `${targetDirectory}/services/impl/${pascalCaseEntityName}Service.java`;
+    // const pascalCaseEntityName = changeCase.pascalCase(entityName.toLowerCase());
+    const targetPath = `${targetDirectory}/services/impl/${entityName}Service.java`;
     const packageService = `${targetDirectory.substring(targetDirectory.indexOf("src/main/java/"), targetDirectory.length)}.services/impl`.replace(new RegExp('/', 'g'), '.').replace('src.main.java.', '');
     const packageIService = `${targetDirectory.substring(targetDirectory.indexOf("src/main/java/"), targetDirectory.length)}.services`.replace(new RegExp('/', 'g'), '.').replace('src.main.java.', '');
     const packageEntity = `${targetDirectory.substring(targetDirectory.indexOf("src/main/java/"), targetDirectory.length)}.entities`.replace(new RegExp('/', 'g'), '.').replace('src.main.java.', '');
     const packageRepository = `${targetDirectory.substring(targetDirectory.indexOf("src/main/java/"), targetDirectory.length)}.repositories`.replace(new RegExp('/', 'g'), '.').replace('src.main.java.', '');
     if (existsSync(targetPath)) {
-        throw Error(`${pascalCaseEntityName}Service.java ya existe`);
+        throw Error(`${entityName}Service.java ya existe`);
     }
     return new Promise(async (resolve, reject) => {
         writeFile(
@@ -152,13 +150,13 @@ export function createController(param: ParamMethodJava) {
     const entityName = param.entityName;
     const targetDirectory = param.targetDirectory;
 
-    const pascalCaseEntityName = changeCase.pascalCase(entityName.toLowerCase());
-    const targetPath = `${targetDirectory}/controllers/${pascalCaseEntityName}RestController.java`;
+    // const pascalCaseEntityName = changeCase.pascalCase(entityName.toLowerCase());
+    const targetPath = `${targetDirectory}/controllers/${entityName}RestController.java`;
     const packageController = `${targetDirectory.substring(targetDirectory.indexOf("src/main/java/"), targetDirectory.length)}.controllers`.replace(new RegExp('/', 'g'), '.').replace('src.main.java.', '');
     const packageIService = `${targetDirectory.substring(targetDirectory.indexOf("src/main/java/"), targetDirectory.length)}.services`.replace(new RegExp('/', 'g'), '.').replace('src.main.java.', '');
     const packageEntity = `${targetDirectory.substring(targetDirectory.indexOf("src/main/java/"), targetDirectory.length)}.entities`.replace(new RegExp('/', 'g'), '.').replace('src.main.java.', '');
     if (existsSync(targetPath)) {
-        throw Error(`${pascalCaseEntityName}RestController.java ya existe`);
+        throw Error(`${entityName}RestController.java ya existe`);
     }
     return new Promise(async (resolve, reject) => {
         writeFile(

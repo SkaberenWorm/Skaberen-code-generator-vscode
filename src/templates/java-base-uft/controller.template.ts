@@ -1,7 +1,6 @@
-import * as changeCase from 'change-case';
-
 import Checkbox from '../../models/checkbox';
 import { METHOD } from '../../models/method-actions';
+import { snakeCaseRequestMapping, toLowerCaseFirstLetter } from '../../utils/utils';
 
 export function getControllerTemplate(
 	controllerName: string,
@@ -12,8 +11,7 @@ export function getControllerTemplate(
 	methods: Array<Checkbox>
 ): string {
 
-	const pascalCaseControllerName = changeCase.pascalCase(controllerName.toLowerCase());
-	const snakeCaseControllerName = changeCase.snakeCase(controllerName.toLowerCase());
+	const controllerNameFirstLetterToLowerCase = toLowerCaseFirstLetter(controllerName);
 	let template = `package ${packageController};
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,49 +29,49 @@ import org.springframework.web.bind.annotation.RestController;
 
 import cl.uft.commons.model.ResultadoProc;
 import cl.uft.commons.model.SearchPagination;
-import ${packageEntity}.${pascalCaseControllerName};
-import ${packageIService}.I${pascalCaseControllerName}Service;
+import ${packageEntity}.${controllerName};
+import ${packageIService}.I${controllerName}Service;
 
 @RestController
-@RequestMapping("/api/${snakeCaseControllerName}")
-public class ${pascalCaseControllerName}RestController {
+@RequestMapping("/api/${snakeCaseRequestMapping(controllerName)}")
+public class ${controllerName}RestController {
 
 	@Autowired
-	I${pascalCaseControllerName}Service ${snakeCaseControllerName}Service;
-${insertMethods(pascalCaseControllerName, snakeCaseControllerName, typeVariableID, methods)}
+	I${controllerName}Service ${controllerNameFirstLetterToLowerCase}Service;
+${insertMethods(controllerName, controllerNameFirstLetterToLowerCase, typeVariableID, methods)}
 }`;
 
 	return template;
 }
 
-function insertMethods(pascalCaseControllerName: string, snakeCaseControllerName: string, typeVariableID: string, methods: Array<Checkbox>) {
+function insertMethods(controllerName: string, controllerNameFirstLetterToLowerCase: string, typeVariableID: string, methods: Array<Checkbox>) {
 	let code = '';
 	methods.forEach(method => {
 		if (method.checked) {
 			switch (method.method) {
 				case METHOD.findById:
 					code += '\n\n\t';
-					code += insertMethodFindById(pascalCaseControllerName, snakeCaseControllerName, typeVariableID);
+					code += insertMethodFindById(controllerName, controllerNameFirstLetterToLowerCase, typeVariableID);
 					break;
 				case METHOD.findAllPaginatedBySearch:
 					code += '\n\n\t';
-					code += insertMethodfindAllPaginatedBySearch(pascalCaseControllerName, snakeCaseControllerName);
+					code += insertMethodfindAllPaginatedBySearch(controllerName, controllerNameFirstLetterToLowerCase);
 					break;
 				case METHOD.save:
 					code += '\n\n\t';
-					code += insertMethodSave(pascalCaseControllerName, snakeCaseControllerName);
+					code += insertMethodSave(controllerName, controllerNameFirstLetterToLowerCase);
 					break;
 				case METHOD.update:
 					code += '\n\n\t';
-					code += insertMethodUpdate(pascalCaseControllerName, snakeCaseControllerName);
+					code += insertMethodUpdate(controllerName, controllerNameFirstLetterToLowerCase);
 					break;
 				case METHOD.changeState:
 					code += '\n\n\t';
-					code += insertMethodChangeState(pascalCaseControllerName, snakeCaseControllerName);
+					code += insertMethodChangeState(controllerName, controllerNameFirstLetterToLowerCase);
 					break;
 				case METHOD.delete:
 					code += '\n\n\t';
-					code += insertMethodDelete(pascalCaseControllerName, snakeCaseControllerName);
+					code += insertMethodDelete(controllerName, controllerNameFirstLetterToLowerCase);
 					break;
 			}
 		}
@@ -83,46 +81,46 @@ function insertMethods(pascalCaseControllerName: string, snakeCaseControllerName
 }
 
 
-function insertMethodFindById(pascalCaseControllerName: string, snakeCaseControllerName: string, typeVariableID: string) {
+function insertMethodFindById(controllerName: string, controllerNameFirstLetterToLowerCase: string, typeVariableID: string) {
 	return `@GetMapping("/{id}")
-	public ResponseEntity<ResultadoProc<${pascalCaseControllerName}>> findById(@PathVariable("id") ${typeVariableID} ${snakeCaseControllerName}Id) {
-		ResultadoProc<${pascalCaseControllerName}> salida = ${snakeCaseControllerName}Service.findById(${snakeCaseControllerName}Id);
-		return new ResponseEntity<ResultadoProc<${pascalCaseControllerName}>>(salida, HttpStatus.OK);
+	public ResponseEntity<ResultadoProc<${controllerName}>> findById(@PathVariable("id") ${typeVariableID} ${controllerNameFirstLetterToLowerCase}Id) {
+		ResultadoProc<${controllerName}> salida = ${controllerNameFirstLetterToLowerCase}Service.findById(${controllerNameFirstLetterToLowerCase}Id);
+		return new ResponseEntity<ResultadoProc<${controllerName}>>(salida, HttpStatus.OK);
 	}`;
 }
 
-function insertMethodfindAllPaginatedBySearch(pascalCaseControllerName: string, snakeCaseControllerName: string) {
+function insertMethodfindAllPaginatedBySearch(controllerName: string, controllerNameFirstLetterToLowerCase: string) {
 	return `@PostMapping("/page-all-by-search")
-		public ResponseEntity<ResultadoProc<Page<${pascalCaseControllerName}>>> findAllPaginatedBySearch(
+		public ResponseEntity<ResultadoProc<Page<${controllerName}>>> findAllPaginatedBySearch(
 				@RequestBody SearchPagination<String> searchPagination) {
 			PageRequest pageable = searchPagination.getPageRequest();
 			String search = searchPagination.getSeek();
-			ResultadoProc<Page<${pascalCaseControllerName}>> salida = ${snakeCaseControllerName}Service.findAllPaginatedBySearch(pageable,
+			ResultadoProc<Page<${controllerName}>> salida = ${controllerNameFirstLetterToLowerCase}Service.findAllPaginatedBySearch(pageable,
 					search);
-			return new ResponseEntity<ResultadoProc<Page<${pascalCaseControllerName}>>>(salida, HttpStatus.OK);
+			return new ResponseEntity<ResultadoProc<Page<${controllerName}>>>(salida, HttpStatus.OK);
 		}`;
 }
 
-function insertMethodSave(pascalCaseControllerName: string, snakeCaseControllerName: string) {
+function insertMethodSave(controllerName: string, controllerNameFirstLetterToLowerCase: string) {
 	return `@PostMapping
-	public ResponseEntity<ResultadoProc<${pascalCaseControllerName}>> save(@RequestBody ${pascalCaseControllerName} ${snakeCaseControllerName}) {
-		ResultadoProc<${pascalCaseControllerName}> salida = ${snakeCaseControllerName}Service.save(${snakeCaseControllerName});
-		return new ResponseEntity<ResultadoProc<${pascalCaseControllerName}>>(salida, HttpStatus.OK);
+	public ResponseEntity<ResultadoProc<${controllerName}>> save(@RequestBody ${controllerName} ${controllerNameFirstLetterToLowerCase}) {
+		ResultadoProc<${controllerName}> salida = ${controllerNameFirstLetterToLowerCase}Service.save(${controllerNameFirstLetterToLowerCase});
+		return new ResponseEntity<ResultadoProc<${controllerName}>>(salida, HttpStatus.OK);
 	}`;
 }
 
-function insertMethodUpdate(pascalCaseControllerName: string, snakeCaseControllerName: string) {
+function insertMethodUpdate(controllerName: string, controllerNameFirstLetterToLowerCase: string) {
 	return `@PutMapping
-	public ResponseEntity<ResultadoProc<${pascalCaseControllerName}>> update(@RequestBody ${pascalCaseControllerName} ${snakeCaseControllerName}) {
-		ResultadoProc<${pascalCaseControllerName}> salida = ${snakeCaseControllerName}Service.update(${snakeCaseControllerName});
-		return new ResponseEntity<ResultadoProc<${pascalCaseControllerName}>>(salida, HttpStatus.OK);
+	public ResponseEntity<ResultadoProc<${controllerName}>> update(@RequestBody ${controllerName} ${controllerNameFirstLetterToLowerCase}) {
+		ResultadoProc<${controllerName}> salida = ${controllerNameFirstLetterToLowerCase}Service.update(${controllerNameFirstLetterToLowerCase});
+		return new ResponseEntity<ResultadoProc<${controllerName}>>(salida, HttpStatus.OK);
 	}`;
 }
 
-function insertMethodChangeState(pascalCaseControllerName: string, snakeCaseControllerName: string) {
+function insertMethodChangeState(controllerName: string, controllerNameFirstLetterToLowerCase: string) {
 	return ``;
 }
 
-function insertMethodDelete(pascalCaseControllerName: string, snakeCaseControllerName: string) {
+function insertMethodDelete(controllerName: string, controllerNameFirstLetterToLowerCase: string) {
 	return ``;
 }

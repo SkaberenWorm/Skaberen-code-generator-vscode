@@ -12,7 +12,7 @@ export function getReducersTemplate(
   const modelNameVar = modelName.substring(0, 1).toLowerCase() + modelName.substring(1, modelName.length);
 
   return `import { Action, createReducer, on } from '@ngrx/store';
-import * as appActions from '../actions/${fileName}.actions';
+import * as fromActions from '../actions/${fileName}.actions';
   
   ${insertInterfaceState(modelName, modelNameVar)}
   ${insertMethods(typePrefix, modelName, modelNameVar, methods)}`;

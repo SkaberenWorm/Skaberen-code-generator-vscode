@@ -1,7 +1,6 @@
-import * as changeCase from 'change-case';
-
 import Checkbox from '../../models/checkbox';
 import { METHOD } from '../../models/method-actions';
+import { toLowerCaseFirstLetter } from '../../utils/utils';
 
 export function getIServiceTemplate(
   iServiceName: string,
@@ -11,50 +10,49 @@ export function getIServiceTemplate(
   methods: Array<Checkbox>
 ): string {
 
-  const pascalCaseIServiceName = changeCase.pascalCase(iServiceName.toLowerCase());
-  const snakeCaseIServiceName = changeCase.snakeCase(iServiceName.toLowerCase());
+  const iServiceNameFirstLetterToLowerCase = toLowerCaseFirstLetter(iServiceName);
   return `package ${packageIService};
   
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
 import cl.uft.commons.model.ResultadoProc;
-import ${packageEntity}.${pascalCaseIServiceName};
+import ${packageEntity}.${iServiceName};
 
-public interface I${pascalCaseIServiceName}Service {
-${insertMethods(pascalCaseIServiceName, snakeCaseIServiceName, typeVariableID, methods)}
+public interface I${iServiceName}Service {
+${insertMethods(iServiceName, iServiceNameFirstLetterToLowerCase, typeVariableID, methods)}
 }
 `;
 }
 
-function insertMethods(pascalCaseControllerName: string, snakeCaseControllerName: string, typeVariableID: string, methods: Array<Checkbox>) {
+function insertMethods(iServiceName: string, iServiceNameFirstLetterToLowerCase: string, typeVariableID: string, methods: Array<Checkbox>) {
   let code = '';
   methods.forEach(method => {
     if (method.checked) {
       switch (method.method) {
         case METHOD.findById:
           code += '\n\n\t';
-          code += insertMethodFindById(pascalCaseControllerName, snakeCaseControllerName, typeVariableID);
+          code += insertMethodFindById(iServiceName, iServiceNameFirstLetterToLowerCase, typeVariableID);
           break;
         case METHOD.findAllPaginatedBySearch:
           code += '\n\n\t';
-          code += insertMethodfindAllPaginatedBySearch(pascalCaseControllerName);
+          code += insertMethodfindAllPaginatedBySearch(iServiceName);
           break;
         case METHOD.save:
           code += '\n\n\t';
-          code += insertMethodSave(pascalCaseControllerName, snakeCaseControllerName);
+          code += insertMethodSave(iServiceName, iServiceNameFirstLetterToLowerCase);
           break;
         case METHOD.update:
           code += '\n\n\t';
-          code += insertMethodUpdate(pascalCaseControllerName, snakeCaseControllerName);
+          code += insertMethodUpdate(iServiceName, iServiceNameFirstLetterToLowerCase);
           break;
         case METHOD.changeState:
           code += '\n\n\t';
-          code += insertMethodChangeState(pascalCaseControllerName, snakeCaseControllerName);
+          code += insertMethodChangeState(iServiceName, iServiceNameFirstLetterToLowerCase);
           break;
         case METHOD.delete:
           code += '\n\n\t';
-          code += insertMethodDelete(pascalCaseControllerName, snakeCaseControllerName);
+          code += insertMethodDelete(iServiceName, iServiceNameFirstLetterToLowerCase);
           break;
       }
     }
