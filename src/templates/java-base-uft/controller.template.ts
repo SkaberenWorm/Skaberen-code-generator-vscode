@@ -95,8 +95,8 @@ function insertMethodfindAllPaginatedBySearch(controllerName: string, controller
 				@RequestBody SearchPagination<String> searchPagination) {
 			PageRequest pageable = searchPagination.getPageRequest();
 			String search = searchPagination.getSeek();
-			ResultadoProc<Page<${controllerName}>> salida = ${controllerNameFirstLetterToLowerCase}Service.findAllPaginatedBySearch(pageable,
-					search);
+			ResultadoProc<Page<${controllerName}>> salida = ${controllerNameFirstLetterToLowerCase}Service.findAllPaginatedBySearch(search,
+				pageable);
 			return new ResponseEntity<ResultadoProc<Page<${controllerName}>>>(salida, HttpStatus.OK);
 		}`;
 }

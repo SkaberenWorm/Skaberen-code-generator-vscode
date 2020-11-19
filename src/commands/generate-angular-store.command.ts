@@ -17,7 +17,6 @@ export const generateCodeAngularStore = async (uri: Uri) => {
       window.showErrorMessage("Por favor seleccione un directorio válido");
       return;
     }
-
   } else {
     targetDirectory = uri.fsPath;
   }

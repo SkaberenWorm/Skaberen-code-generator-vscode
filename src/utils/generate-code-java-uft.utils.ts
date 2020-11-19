@@ -31,10 +31,7 @@ export function createEntity(param: ParamMethodJava) {
             ),
             "utf8",
             (error) => {
-                if (error) {
-                    reject(error);
-                    return;
-                }
+                if (error) { reject(error); return; }
                 resolve();
             }
         );
@@ -46,7 +43,6 @@ export function createRepository(param: ParamMethodJava) {
     const entityName = param.entityName;
     const targetDirectory = param.targetDirectory;
 
-    // const pascalCaseEntityName = changeCase.pascalCase(entityName.toLowerCase());
     const targetPath = `${targetDirectory}/repositories/${entityName}Repository.java`;
     const packageRepository = `${targetDirectory.substring(targetDirectory.indexOf("src/main/java/"), targetDirectory.length)}.repositories`.replace(new RegExp('/', 'g'), '.').replace('src.main.java.', '');
     const packageEntity = `${targetDirectory.substring(targetDirectory.indexOf("src/main/java/"), targetDirectory.length)}.entities`.replace(new RegExp('/', 'g'), '.').replace('src.main.java.', '');
@@ -64,10 +60,7 @@ export function createRepository(param: ParamMethodJava) {
                 param.methodsSelected),
             "utf8",
             (error) => {
-                if (error) {
-                    reject(error);
-                    return;
-                }
+                if (error) { reject(error); return; }
                 resolve();
             }
         );
@@ -79,7 +72,6 @@ export function createIService(param: ParamMethodJava) {
     const entityName = param.entityName;
     const targetDirectory = param.targetDirectory;
 
-    // const pascalCaseEntityName = changeCase.pascalCase(entityName.toLowerCase());
     const targetPath = `${targetDirectory}/services/I${entityName}Service.java`;
     const packageIService = `${targetDirectory.substring(targetDirectory.indexOf("src/main/java/"), targetDirectory.length)}.services`.replace(new RegExp('/', 'g'), '.').replace('src.main.java.', '');
     const packageEntity = `${targetDirectory.substring(targetDirectory.indexOf("src/main/java/"), targetDirectory.length)}.entities`.replace(new RegExp('/', 'g'), '.').replace('src.main.java.', '');
@@ -94,13 +86,11 @@ export function createIService(param: ParamMethodJava) {
                 packageIService,
                 packageEntity,
                 param.typeVariableID,
-                param.methodsSelected),
+                param.methodsSelected,
+                param.sexEntity),
             "utf8",
             (error) => {
-                if (error) {
-                    reject(error);
-                    return;
-                }
+                if (error) { reject(error); return; }
                 resolve();
             }
         );
@@ -112,7 +102,6 @@ export function createService(param: ParamMethodJava) {
     const entityName = param.entityName;
     const targetDirectory = param.targetDirectory;
 
-    // const pascalCaseEntityName = changeCase.pascalCase(entityName.toLowerCase());
     const targetPath = `${targetDirectory}/services/impl/${entityName}Service.java`;
     const packageService = `${targetDirectory.substring(targetDirectory.indexOf("src/main/java/"), targetDirectory.length)}.services/impl`.replace(new RegExp('/', 'g'), '.').replace('src.main.java.', '');
     const packageIService = `${targetDirectory.substring(targetDirectory.indexOf("src/main/java/"), targetDirectory.length)}.services`.replace(new RegExp('/', 'g'), '.').replace('src.main.java.', '');
@@ -134,10 +123,7 @@ export function createService(param: ParamMethodJava) {
                 param.methodsSelected),
             "utf8",
             (error) => {
-                if (error) {
-                    reject(error);
-                    return;
-                }
+                if (error) { reject(error); return; }
                 resolve();
             }
         );
@@ -150,7 +136,6 @@ export function createController(param: ParamMethodJava) {
     const entityName = param.entityName;
     const targetDirectory = param.targetDirectory;
 
-    // const pascalCaseEntityName = changeCase.pascalCase(entityName.toLowerCase());
     const targetPath = `${targetDirectory}/controllers/${entityName}RestController.java`;
     const packageController = `${targetDirectory.substring(targetDirectory.indexOf("src/main/java/"), targetDirectory.length)}.controllers`.replace(new RegExp('/', 'g'), '.').replace('src.main.java.', '');
     const packageIService = `${targetDirectory.substring(targetDirectory.indexOf("src/main/java/"), targetDirectory.length)}.services`.replace(new RegExp('/', 'g'), '.').replace('src.main.java.', '');
@@ -171,10 +156,7 @@ export function createController(param: ParamMethodJava) {
             ),
             "utf8",
             (error) => {
-                if (error) {
-                    reject(error);
-                    return;
-                }
+                if (error) { reject(error); return; }
                 resolve();
             }
         );

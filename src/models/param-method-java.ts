@@ -5,12 +5,14 @@ export default class ParamMethodJava {
     targetDirectory: string = '';
     typeVariableID: string = '';
     methodsSelected: Array<Checkbox> = [];
+    sexEntity: string = '';
 
     constructor(fields?: {
         entityName: string;
         targetDirectory: string;
         typeVariableID: string;
         methodsSelected: Array<Checkbox>;
+        sexEntity: string;
     }) {
         if (fields) { Object.assign(this, fields); }
     }

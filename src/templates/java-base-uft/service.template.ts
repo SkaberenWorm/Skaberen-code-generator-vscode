@@ -3,7 +3,7 @@ import { METHOD } from '../../models/method-actions';
 import { toLowerCaseFirstLetter } from '../../utils/utils';
 
 export function getServiceTemplate(
-  serviceName: string,
+  entityName: string,
   packageService: string,
   packageIService: string,
   packageEntity: string,
@@ -12,7 +12,7 @@ export function getServiceTemplate(
   methods: Array<Checkbox>
 ): string {
 
-  const serviceNameFirstLetterToLowerCase = toLowerCaseFirstLetter(serviceName);
+  const entityNameFirstLetterToLowerCase = toLowerCaseFirstLetter(entityName);
   return `package ${packageService};
 
   import org.springframework.beans.factory.annotation.Autowired;
@@ -23,51 +23,51 @@ export function getServiceTemplate(
   import lombok.extern.apachecommons.CommonsLog;
   
   import cl.uft.commons.model.ResultadoProc;
-  import ${packageEntity}.${serviceName};
-  import ${packageRepository}.${serviceName}Repository;
-  import ${packageIService}.I${serviceName}Service;
+  import ${packageEntity}.${entityName};
+  import ${packageRepository}.${entityName}Repository;
+  import ${packageIService}.I${entityName}Service;
   
   @Service
   @CommonsLog
-  public class ${serviceName}Service implements I${serviceName}Service {
+  public class ${entityName}Service implements I${entityName}Service {
   
     @Autowired
-    ${serviceName}Repository ${serviceNameFirstLetterToLowerCase}Repository;
-  ${insertMethods(serviceName, serviceNameFirstLetterToLowerCase, typeVariableID, methods)}
+    ${entityName}Repository ${entityNameFirstLetterToLowerCase}Repository;
+  ${insertMethods(entityName, entityNameFirstLetterToLowerCase, typeVariableID, methods)}
   }
   
 `;
 }
 
 
-function insertMethods(pascalCaseControllerName: string, serviceNameFirstLetterToLowerCase: string, typeVariableID: string, methods: Array<Checkbox>) {
+function insertMethods(entityName: string, entityNameFirstLetterToLowerCase: string, typeVariableID: string, methods: Array<Checkbox>) {
   let code = '';
   methods.forEach(method => {
     if (method.checked) {
       switch (method.method) {
         case METHOD.findById:
           code += '\n\n\t';
-          code += insertMethodFindById(pascalCaseControllerName, serviceNameFirstLetterToLowerCase, typeVariableID);
+          code += insertMethodFindById(entityName, entityNameFirstLetterToLowerCase, typeVariableID);
           break;
         case METHOD.findAllPaginatedBySearch:
           code += '\n\n\t';
-          code += insertMethodfindAllPaginatedBySearch(pascalCaseControllerName, serviceNameFirstLetterToLowerCase);
+          code += insertMethodfindAllPaginatedBySearch(entityName, entityNameFirstLetterToLowerCase);
           break;
         case METHOD.save:
           code += '\n\n\t';
-          code += insertMethodSave(pascalCaseControllerName, serviceNameFirstLetterToLowerCase);
+          code += insertMethodSave(entityName, entityNameFirstLetterToLowerCase);
           break;
         case METHOD.update:
           code += '\n\n\t';
-          code += insertMethodUpdate(pascalCaseControllerName, serviceNameFirstLetterToLowerCase);
+          code += insertMethodUpdate(entityName, entityNameFirstLetterToLowerCase);
           break;
         case METHOD.changeState:
           code += '\n\n\t';
-          code += insertMethodChangeState(pascalCaseControllerName, serviceNameFirstLetterToLowerCase);
+          code += insertMethodChangeState(entityName, entityNameFirstLetterToLowerCase);
           break;
         case METHOD.delete:
           code += '\n\n\t';
-          code += insertMethodDelete(pascalCaseControllerName, serviceNameFirstLetterToLowerCase);
+          code += insertMethodDelete(entityName, entityNameFirstLetterToLowerCase);
           break;
       }
     }
@@ -77,73 +77,73 @@ function insertMethods(pascalCaseControllerName: string, serviceNameFirstLetterT
 }
 
 
-function insertMethodFindById(pascalCaseControllerName: string, serviceNameFirstLetterToLowerCase: string, typeVariableID: string) {
+function insertMethodFindById(entityName: string, entityNameFirstLetterToLowerCase: string, typeVariableID: string) {
   return `@Override
-  public ResultadoProc<${pascalCaseControllerName}> findById(final ${typeVariableID} ${serviceNameFirstLetterToLowerCase}Id) {
-    final ResultadoProc.Builder<${pascalCaseControllerName}> salida = new ResultadoProc.Builder<${pascalCaseControllerName}>();
+  public ResultadoProc<${entityName}> findById(final ${typeVariableID} ${entityNameFirstLetterToLowerCase}Id) {
+    final ResultadoProc.Builder<${entityName}> salida = new ResultadoProc.Builder<${entityName}>();
     try {
-      final ${pascalCaseControllerName} ${serviceNameFirstLetterToLowerCase} = ${serviceNameFirstLetterToLowerCase}Repository.findById(${serviceNameFirstLetterToLowerCase}Id).orElse(null);
-      if (${serviceNameFirstLetterToLowerCase} == null) {
-        salida.fallo("No se ha encontrado el ${serviceNameFirstLetterToLowerCase}");
+      final ${entityName} ${entityNameFirstLetterToLowerCase} = ${entityNameFirstLetterToLowerCase}Repository.findById(${entityNameFirstLetterToLowerCase}Id).orElse(null);
+      if (${entityNameFirstLetterToLowerCase} == null) {
+        salida.fallo("No se ha encontrado el ${entityNameFirstLetterToLowerCase}");
       }
-      salida.exitoso(${serviceNameFirstLetterToLowerCase});
+      salida.exitoso(${entityNameFirstLetterToLowerCase});
     } catch (final Exception e) {
       log.error(e.getMessage(), e);
-      salida.fallo("Se produjo un error inesperado al intentar obtener el ${serviceNameFirstLetterToLowerCase}");
+      salida.fallo("Se produjo un error inesperado al intentar obtener el ${entityNameFirstLetterToLowerCase}");
     }
     return salida.build();
   }`;
 }
 
-function insertMethodfindAllPaginatedBySearch(pascalCaseControllerName: string, serviceNameFirstLetterToLowerCase: string) {
+function insertMethodfindAllPaginatedBySearch(entityName: string, entityNameFirstLetterToLowerCase: string) {
   return `@Override
-  public ResultadoProc<Page<${pascalCaseControllerName}>> findAllPaginatedBySearch(final PageRequest pageable, final String search) {
-    final ResultadoProc.Builder<Page<${pascalCaseControllerName}>> salida = new ResultadoProc.Builder<Page<${pascalCaseControllerName}>>();
+  public ResultadoProc<Page<${entityName}>> findAllPaginatedBySearch(final String search, final PageRequest pageable) {
+    final ResultadoProc.Builder<Page<${entityName}>> salida = new ResultadoProc.Builder<Page<${entityName}>>();
     try {
-      salida.exitoso(${serviceNameFirstLetterToLowerCase}Repository.findAllBySearch(search, pageable));
+      salida.exitoso(${entityNameFirstLetterToLowerCase}Repository.findAllBySearch(search, pageable));
     } catch (final Exception e) {
       log.error(e.getMessage(), e);
-      salida.fallo("Se produjo un error inesperado al intentar listar los ${serviceNameFirstLetterToLowerCase}s");
+      salida.fallo("Se produjo un error inesperado al intentar listar los ${entityNameFirstLetterToLowerCase}s");
     }
     return salida.build();
   }`;
 }
 
-function insertMethodSave(pascalCaseControllerName: string, serviceNameFirstLetterToLowerCase: string) {
+function insertMethodSave(entityName: string, entityNameFirstLetterToLowerCase: string) {
   return `@Override
-  public ResultadoProc<${pascalCaseControllerName}> save(final ${pascalCaseControllerName} ${serviceNameFirstLetterToLowerCase}) {
-    final ResultadoProc.Builder<${pascalCaseControllerName}> salida = new ResultadoProc.Builder<${pascalCaseControllerName}>();
+  public ResultadoProc<${entityName}> save(final ${entityName} ${entityNameFirstLetterToLowerCase}) {
+    final ResultadoProc.Builder<${entityName}> salida = new ResultadoProc.Builder<${entityName}>();
     try {
-      ${serviceNameFirstLetterToLowerCase}Repository.save(${serviceNameFirstLetterToLowerCase});
-      salida.exitoso(${serviceNameFirstLetterToLowerCase}, "${pascalCaseControllerName} registrado correctamente");
+      ${entityNameFirstLetterToLowerCase}Repository.save(${entityNameFirstLetterToLowerCase});
+      salida.exitoso(${entityNameFirstLetterToLowerCase}, "${entityName} registrado correctamente");
     } catch (final Exception e) {
       log.error(e.getMessage(), e);
-      salida.fallo("Se produjo un error inesperado al intentar registrar el ${serviceNameFirstLetterToLowerCase}");
+      salida.fallo("Se produjo un error inesperado al intentar registrar el ${entityNameFirstLetterToLowerCase}");
     }
     return salida.build();
   }`;
 }
 
-function insertMethodUpdate(pascalCaseControllerName: string, serviceNameFirstLetterToLowerCase: string) {
+function insertMethodUpdate(entityName: string, entityNameFirstLetterToLowerCase: string) {
   return `@Override
-  public ResultadoProc<${pascalCaseControllerName}> update(final ${pascalCaseControllerName} ${serviceNameFirstLetterToLowerCase}) {
-    final ResultadoProc.Builder<${pascalCaseControllerName}> salida = new ResultadoProc.Builder<${pascalCaseControllerName}>();
+  public ResultadoProc<${entityName}> update(final ${entityName} ${entityNameFirstLetterToLowerCase}) {
+    final ResultadoProc.Builder<${entityName}> salida = new ResultadoProc.Builder<${entityName}>();
     try {
-      ${serviceNameFirstLetterToLowerCase}Repository.save(${serviceNameFirstLetterToLowerCase});
-      salida.exitoso(${serviceNameFirstLetterToLowerCase}, "${pascalCaseControllerName} actualizado correctamente");
+      ${entityNameFirstLetterToLowerCase}Repository.save(${entityNameFirstLetterToLowerCase});
+      salida.exitoso(${entityNameFirstLetterToLowerCase}, "${entityName} actualizado correctamente");
     } catch (final Exception e) {
       log.error(e.getMessage(), e);
-      salida.fallo("Se produjo un error inesperado al intentar actualizar el ${serviceNameFirstLetterToLowerCase}");
+      salida.fallo("Se produjo un error inesperado al intentar actualizar el ${entityNameFirstLetterToLowerCase}");
     }
     return salida.build();
   }`;
 }
 
-function insertMethodChangeState(pascalCaseControllerName: string, serviceNameFirstLetterToLowerCase: string) {
+function insertMethodChangeState(entityName: string, entityNameFirstLetterToLowerCase: string) {
   return ``;
 }
 
-function insertMethodDelete(pascalCaseControllerName: string, serviceNameFirstLetterToLowerCase: string) {
+function insertMethodDelete(entityName: string, entityNameFirstLetterToLowerCase: string) {
   return ``;
 }
 

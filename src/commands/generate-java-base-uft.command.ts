@@ -45,6 +45,11 @@ export const generateCodeJavaBase = async (uri: Uri) => {
     }
   }
 
+  const sexEntityOpt = await window.showQuickPick([`La ${entityName}`, `El ${entityName}`], {
+    placeHolder: 'Tipo de variable del identificador',
+  });
+  const sexEntity = sexEntityOpt === `La ${entityName}` ? 'F' : 'M';
+
   const metodosChecboxes: Array<Checkbox> = methods;
 
   await showQuickPickMethods(metodosChecboxes, entityName).then(methods => {
@@ -62,7 +67,7 @@ export const generateCodeJavaBase = async (uri: Uri) => {
   );
 
   try {
-    await generateAllCode(entityName, targetDirectory, typeVariableID, metodosChecboxes);
+    await generateAllCode(entityName, targetDirectory, typeVariableID, metodosChecboxes, sexEntity);
     window.showInformationMessage(
       `Exito! Código ${entityName} generado correctamente`
     );
@@ -89,7 +94,7 @@ function promptForTypeVariable(): Thenable<string | undefined> {
   return window.showInputBox(entityNamePromptOptions);
 }
 
-async function generateAllCode(entityName: string, targetDirectory: string, typeVariableID: string, methodsSelected: Array<Checkbox>) {
+async function generateAllCode(entityName: string, targetDirectory: string, typeVariableID: string, methodsSelected: Array<Checkbox>, sexEntity: string) {
   if (!existsSync(`${targetDirectory}/entities`)) {
     await createDirectory(`${targetDirectory}/entities`);
   }
@@ -114,6 +119,7 @@ async function generateAllCode(entityName: string, targetDirectory: string, type
     targetDirectory: targetDirectory,
     typeVariableID: typeVariableID,
     methodsSelected: methodsSelected,
+    sexEntity: sexEntity,
   });
   await Promise.all([
     createEntity(data),
