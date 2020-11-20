@@ -48,7 +48,9 @@ export function snakeCaseRequestMapping(entityName: string) {
     return salida;
 }
 
-
+export function isFem(sexEntity: string): boolean {
+    return sexEntity === 'F';
+}
 
 export function toLowerCaseFirstLetter(word: string) {
     return word[0].toLowerCase() + word.slice(1);

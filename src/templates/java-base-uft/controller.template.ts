@@ -6,9 +6,11 @@ export function getControllerTemplate(
 	controllerName: string,
 	packageController: string,
 	packageEntity: string,
+	packageUtil: string,
 	packageIService: string,
 	typeVariableID: string,
-	methods: Array<Checkbox>
+	methods: Array<Checkbox>,
+	useUtilClass: boolean,
 ): string {
 
 	const controllerNameFirstLetterToLowerCase = toLowerCaseFirstLetter(controllerName);
@@ -27,8 +29,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import cl.uft.commons.model.ResultadoProc;
-import cl.uft.commons.model.SearchPagination;
+import ${useUtilClass ? packageUtil + '.ResultadoProc;' : 'cl.uft.commons.model.ResultadoProc;'}
+import ${useUtilClass ? packageUtil + '.SearchPagination;' : 'cl.uft.commons.model.SearchPagination;'}
 import ${packageEntity}.${controllerName};
 import ${packageIService}.I${controllerName}Service;
 

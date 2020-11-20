@@ -1,14 +1,16 @@
 import Checkbox from '../../models/checkbox';
 import { METHOD } from '../../models/method-actions';
-import { toLowerCaseFirstLetter } from '../../utils/utils';
+import { isFem, toLowerCaseFirstLetter } from '../../utils/utils';
 
 export function getIServiceTemplate(
   entityName: string,
   packageIService: string,
   packageEntity: string,
+  packageUtil: string,
   typeVariableID: string,
   methods: Array<Checkbox>,
   sexEntity: string,
+  useUtilClass: boolean,
 ): string {
 
   const entityNameFirstLetterToLowerCase = toLowerCaseFirstLetter(entityName);
@@ -17,7 +19,7 @@ export function getIServiceTemplate(
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
-import cl.uft.commons.model.ResultadoProc;
+import ${useUtilClass ? packageUtil + '.ResultadoProc;' : 'cl.uft.commons.model.ResultadoProc;'}
 import ${packageEntity}.${entityName};
 
 public interface I${entityName}Service {
@@ -112,9 +114,7 @@ function insertMethodDelete(entityName: string, entityNameFirstLetterToLowerCase
   return ``;
 }
 
-function isFem(sexEntity: string): boolean {
-  return sexEntity === 'F';
-}
+
 
 
 

@@ -1,65 +1,56 @@
-# spring-boot-base-code-generator README
+# Skaberen code generator extension for Visual Studio Code
 
-This is the README for your extension "spring-boot-base-code-generator". After writing up a brief description, we recommend including the following sections.
+[Skaberen code generator](https://marketplace.visualstudio.com/items?itemName=Skaberencodetools.skaberen-code-generator) es una extensión de Visual Studio Code que nos permite **generar un código base con una interfaz gráfica de usuario**.
+<br><br>
+## ¿Por qué esta extensión?
 
-## Features
+Esta extensión te ahorrará tiempo:
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+- **Spring boot**: Genera una API REST completa, creando las entidades, servicios, repositorios y controladores.
+- **NgRx**: Genera acciones, efectos y reducers simplemente indicando el nombre del modelo.
 
-For example if there is an image subfolder under your extension project workspace:
+<br>
 
-\!\[feature X\]\(images/feature-x.png\)
+## Requisitos
+- Instalar extensión [Lombok Annotations Support for VS Code](https://marketplace.visualstudio.com/items?itemName=GabrielBB.vscode-lombok)
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+<br>
 
-## Requirements
+## ¿Cómo empezar?
+### PASOS: API REST con Spring boot
+Click derecho sobre el **package principal** en el explorador de directorios, despúes seleccione "Skaberen Java: Generate base code"
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+**NOTA: Se tomará como package principal la ruta del directorio seleccionado**
 
-## Extension Settings
+<img width="608" alt="Skaben Java paso 01" src="https://user-images.githubusercontent.com/13028053/99841378-d8382880-2b4c-11eb-89cb-16c58dc61c2f.png">
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+Indique el nombre de la entidad
 
-For example:
+<img width="608" alt="Skaberen Java paso 02" 
+src="https://user-images.githubusercontent.com/13028053/99841998-d0c54f00-2b4d-11eb-9ae9-cf8a29efd969.png">
 
-This extension contributes the following settings:
+Seleccione o escriba el tipo de variable de la primary key
+<img width="608" alt="Skaberen Java paso 03" 
+src="https://user-images.githubusercontent.com/13028053/99841349-ca82a300-2b4c-11eb-83ef-c2d2bd7e6a55.png">
 
-* `myExtension.enable`: enable/disable this extension
-* `myExtension.thing`: set to `blah` to do something
+Seleccione el sexo de la clase, para la generación de comentarios
+<img width="608" alt="Skaberen Java paso 04" 
+src="https://user-images.githubusercontent.com/13028053/99841356-cc4c6680-2b4c-11eb-89c2-b12d40a07967.png">
 
-## Known Issues
+Seleccione los métodos que desea agregar al código
+<img width="608" alt="Skaberen Java paso 05" 
+src="https://user-images.githubusercontent.com/13028053/99841360-d0788400-2b4c-11eb-86f7-23476fcc7191.png">
 
-Calling out known issues can help limit users opening duplicate issues against your extension.
+Debe indicar de dónde se importarán las clases de utilidad
+- Usar clases locales: _Se crearán las clases dentro de una carpera llamada Utils_
+- Usar repositorio UFT: _Importará las clases del repositorio de la Universidad Finis Terrae (cl.uft.commons.model.*)_ 
 
-## Release Notes
+<img width="608" alt="Skaberen Java paso 06" src="https://user-images.githubusercontent.com/13028053/99841365-d2dade00-2b4c-11eb-8fc8-877083a62ae6.png">
 
-Users appreciate release notes as you update your extension.
+<br><br>
 
-### 1.0.0
+## Resultado 
 
-Initial release of ...
+<img width="608" alt="Skaberen Java paso 07" src="https://user-images.githubusercontent.com/13028053/99841370-d5d5ce80-2b4c-11eb-8bb9-57c84df91181.png">
 
-### 1.0.1
 
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
-
------------------------------------------------------------------------------------------------------------
-
-## Working with Markdown
-
-**Note:** You can author your README using Visual Studio Code.  Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux)
-* Toggle preview (`Shift+CMD+V` on macOS or `Shift+Ctrl+V` on Windows and Linux)
-* Press `Ctrl+Space` (Windows, Linux) or `Cmd+Space` (macOS) to see a list of Markdown snippets
-
-### For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**

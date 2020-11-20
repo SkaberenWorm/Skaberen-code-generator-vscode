@@ -11,6 +11,8 @@ import {
   createIService,
   createRepository,
   createService,
+  createUtilResultadoProcIfNotExist,
+  createUtilSearchPaginationIfNotExist,
 } from '../utils/generate-code-java-uft.utils';
 import { createDirectory, promptForTargetDirectory } from '../utils/utils';
 
@@ -27,11 +29,12 @@ export const generateCodeJavaBase = async (uri: Uri) => {
     targetDirectory = uri.fsPath;
   }
 
-  const entityName = await promptForEntityName();
+  let entityName = await promptForEntityName();
   if (lodash.isNil(entityName) || entityName.trim() === "") {
     window.showErrorMessage("El nombre de la clase no debe estar vacía");
     return;
   }
+  entityName = entityName[0].toUpperCase() + entityName.slice(1);
 
   let typeVariableID = await window.showQuickPick(['int', 'long', 'String', 'otro'], {
     placeHolder: 'Tipo de variable del identificador',
@@ -46,7 +49,7 @@ export const generateCodeJavaBase = async (uri: Uri) => {
   }
 
   const sexEntityOpt = await window.showQuickPick([`La ${entityName}`, `El ${entityName}`], {
-    placeHolder: 'Tipo de variable del identificador',
+    placeHolder: 'Sexo de la clase',
   });
   const sexEntity = sexEntityOpt === `La ${entityName}` ? 'F' : 'M';
 
@@ -66,8 +69,13 @@ export const generateCodeJavaBase = async (uri: Uri) => {
   }
   );
 
+  const useUtilClassOpt = await window.showQuickPick([`Usar clases locales`, `Usar repositorio UFT`], {
+    placeHolder: 'Importar clases de utilidad (ResultadoProc, SearchPagination, etc)',
+  });
+  const useUtilClass = useUtilClassOpt === `Usar clases locales`;
+
   try {
-    await generateAllCode(entityName, targetDirectory, typeVariableID, metodosChecboxes, sexEntity);
+    await generateAllCode(entityName, targetDirectory, typeVariableID, metodosChecboxes, sexEntity, useUtilClass);
     window.showInformationMessage(
       `Exito! Código ${entityName} generado correctamente`
     );
@@ -94,7 +102,7 @@ function promptForTypeVariable(): Thenable<string | undefined> {
   return window.showInputBox(entityNamePromptOptions);
 }
 
-async function generateAllCode(entityName: string, targetDirectory: string, typeVariableID: string, methodsSelected: Array<Checkbox>, sexEntity: string) {
+async function generateAllCode(entityName: string, targetDirectory: string, typeVariableID: string, methodsSelected: Array<Checkbox>, sexEntity: string, useUtilClass: boolean) {
   if (!existsSync(`${targetDirectory}/entities`)) {
     await createDirectory(`${targetDirectory}/entities`);
   }
@@ -110,7 +118,7 @@ async function generateAllCode(entityName: string, targetDirectory: string, type
   if (!existsSync(`${targetDirectory}/services/impl`)) {
     await createDirectory(`${targetDirectory}/services/impl`);
   }
-  if (!existsSync(`${targetDirectory}/utils`)) {
+  if (!existsSync(`${targetDirectory}/utils`) && useUtilClass) {
     await createDirectory(`${targetDirectory}/utils`);
   }
 
@@ -120,6 +128,7 @@ async function generateAllCode(entityName: string, targetDirectory: string, type
     typeVariableID: typeVariableID,
     methodsSelected: methodsSelected,
     sexEntity: sexEntity,
+    useUtilClass: useUtilClass,
   });
   await Promise.all([
     createEntity(data),
@@ -128,9 +137,14 @@ async function generateAllCode(entityName: string, targetDirectory: string, type
     createController(data),
     createRepository(data),
   ]);
+  if (data.useUtilClass) {
+    await Promise.all([
+      createUtilResultadoProcIfNotExist(data),
+      createUtilSearchPaginationIfNotExist(data),
+    ]);
+  }
+
 }
-
-
 
 const showQuickPickMethods = (checkboxes: Checkbox[], entityName: string) => {
   const pickItems: QuickPickItem[] = checkboxes.map(checkbox => {

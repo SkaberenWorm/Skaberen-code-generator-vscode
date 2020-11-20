@@ -1,10 +1,19 @@
 {
-	"name": "spring-boot-base-code-generator",
-	"displayName": "Spring boot base code generator",
-	"description": "Generate base code for a API REST ",
-	"version": "0.0.1",
+	"name": "skaberen-code-generator",
+	"displayName": "Skaberen code generator",
+	"description": "Generate base code for an API REST ",
+	"version": "0.0.2",
 	"engines": {
 		"vscode": "^1.47.0"
+	},
+	"publisher": "Skaberencodetools",
+	"author": {
+		"name": "Ismael Cuevas",
+		"email": "ismael.c.26a@gmail.com"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/SkaberenWorm/Skaberen-generate-code_vscode"
 	},
 	"categories": [
 		"Other"
@@ -28,12 +37,12 @@
 			"explorer/context": [
 				{
 					"command": "spring-boot-base-code-generator.generateCode",
-					"group": "SkaberenGroupJava",
+					"group": "SkaberenCodeTools",
 					"when": "explorerResourceIsFolder"
 				},
 				{
 					"command": "spring-boot-base-code-generator.generateCodeNgStore",
-					"group": "SkaberenGroupAngular",
+					"group": "SkaberenCodeTools",
 					"when": "explorerResourceIsFolder"
 				}
 			]

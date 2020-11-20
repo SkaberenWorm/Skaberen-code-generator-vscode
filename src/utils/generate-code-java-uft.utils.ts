@@ -5,6 +5,8 @@ import { getControllerTemplate } from '../templates/java-base-uft/controller.tem
 import { getEntityTemplate } from '../templates/java-base-uft/entity.template';
 import { getIServiceTemplate } from '../templates/java-base-uft/iservice.template';
 import { getRepositoryTemplate } from '../templates/java-base-uft/repository.template';
+import { getResultadoProcTemplate } from '../templates/java-base-uft/resultado-proc.template';
+import { getSearchPaginationTemplate } from '../templates/java-base-uft/search-pagination.template';
 import { getServiceTemplate } from '../templates/java-base-uft/service.template';
 import { generatedVersionUID } from './utils';
 
@@ -75,6 +77,7 @@ export function createIService(param: ParamMethodJava) {
     const targetPath = `${targetDirectory}/services/I${entityName}Service.java`;
     const packageIService = `${targetDirectory.substring(targetDirectory.indexOf("src/main/java/"), targetDirectory.length)}.services`.replace(new RegExp('/', 'g'), '.').replace('src.main.java.', '');
     const packageEntity = `${targetDirectory.substring(targetDirectory.indexOf("src/main/java/"), targetDirectory.length)}.entities`.replace(new RegExp('/', 'g'), '.').replace('src.main.java.', '');
+    const packageUtil = `${targetDirectory.substring(targetDirectory.indexOf("src/main/java/"), targetDirectory.length)}.utils`.replace(new RegExp('/', 'g'), '.').replace('src.main.java.', '');
     if (existsSync(targetPath)) {
         throw Error(`I${entityName}Service.java ya existe`);
     }
@@ -85,9 +88,12 @@ export function createIService(param: ParamMethodJava) {
                 entityName,
                 packageIService,
                 packageEntity,
+                packageUtil,
                 param.typeVariableID,
                 param.methodsSelected,
-                param.sexEntity),
+                param.sexEntity,
+                param.useUtilClass,
+            ),
             "utf8",
             (error) => {
                 if (error) { reject(error); return; }
@@ -107,6 +113,7 @@ export function createService(param: ParamMethodJava) {
     const packageIService = `${targetDirectory.substring(targetDirectory.indexOf("src/main/java/"), targetDirectory.length)}.services`.replace(new RegExp('/', 'g'), '.').replace('src.main.java.', '');
     const packageEntity = `${targetDirectory.substring(targetDirectory.indexOf("src/main/java/"), targetDirectory.length)}.entities`.replace(new RegExp('/', 'g'), '.').replace('src.main.java.', '');
     const packageRepository = `${targetDirectory.substring(targetDirectory.indexOf("src/main/java/"), targetDirectory.length)}.repositories`.replace(new RegExp('/', 'g'), '.').replace('src.main.java.', '');
+    const packageUtil = `${targetDirectory.substring(targetDirectory.indexOf("src/main/java/"), targetDirectory.length)}.utils`.replace(new RegExp('/', 'g'), '.').replace('src.main.java.', '');
     if (existsSync(targetPath)) {
         throw Error(`${entityName}Service.java ya existe`);
     }
@@ -118,9 +125,12 @@ export function createService(param: ParamMethodJava) {
                 packageService,
                 packageIService,
                 packageEntity,
+                packageUtil,
                 packageRepository,
                 param.typeVariableID,
-                param.methodsSelected),
+                param.methodsSelected,
+                param.sexEntity,
+                param.useUtilClass),
             "utf8",
             (error) => {
                 if (error) { reject(error); return; }
@@ -140,6 +150,7 @@ export function createController(param: ParamMethodJava) {
     const packageController = `${targetDirectory.substring(targetDirectory.indexOf("src/main/java/"), targetDirectory.length)}.controllers`.replace(new RegExp('/', 'g'), '.').replace('src.main.java.', '');
     const packageIService = `${targetDirectory.substring(targetDirectory.indexOf("src/main/java/"), targetDirectory.length)}.services`.replace(new RegExp('/', 'g'), '.').replace('src.main.java.', '');
     const packageEntity = `${targetDirectory.substring(targetDirectory.indexOf("src/main/java/"), targetDirectory.length)}.entities`.replace(new RegExp('/', 'g'), '.').replace('src.main.java.', '');
+    const packageUtil = `${targetDirectory.substring(targetDirectory.indexOf("src/main/java/"), targetDirectory.length)}.utils`.replace(new RegExp('/', 'g'), '.').replace('src.main.java.', '');
     if (existsSync(targetPath)) {
         throw Error(`${entityName}RestController.java ya existe`);
     }
@@ -150,9 +161,11 @@ export function createController(param: ParamMethodJava) {
                 entityName,
                 packageController,
                 packageEntity,
+                packageUtil,
                 packageIService,
                 param.typeVariableID,
                 param.methodsSelected,
+                param.useUtilClass,
             ),
             "utf8",
             (error) => {
@@ -162,3 +175,49 @@ export function createController(param: ParamMethodJava) {
         );
     });
 }
+
+
+export function createUtilResultadoProcIfNotExist(param: ParamMethodJava) {
+    const targetDirectory = param.targetDirectory;
+    const targetPath = `${targetDirectory}/utils/ResultadoProc.java`;
+    const packageUtil = `${targetDirectory.substring(targetDirectory.indexOf("src/main/java/"), targetDirectory.length)}.utils`.replace(new RegExp('/', 'g'), '.').replace('src.main.java.', '');
+    if (!existsSync(targetPath)) {
+        return new Promise(async (resolve, reject) => {
+            writeFile(
+                targetPath,
+                getResultadoProcTemplate(
+                    packageUtil,
+                    generatedVersionUID()
+                ),
+                "utf8",
+                (error) => {
+                    if (error) { reject(error); return; }
+                    resolve();
+                }
+            );
+        });
+    }
+}
+
+export function createUtilSearchPaginationIfNotExist(param: ParamMethodJava) {
+    const targetDirectory = param.targetDirectory;
+    const targetPath = `${targetDirectory}/utils/SearchPagination.java`;
+    const packageUtil = `${targetDirectory.substring(targetDirectory.indexOf("src/main/java/"), targetDirectory.length)}.utils`.replace(new RegExp('/', 'g'), '.').replace('src.main.java.', '');
+    if (!existsSync(targetPath)) {
+        return new Promise(async (resolve, reject) => {
+            writeFile(
+                targetPath,
+                getSearchPaginationTemplate(
+                    packageUtil,
+                    generatedVersionUID()
+                ),
+                "utf8",
+                (error) => {
+                    if (error) { reject(error); return; }
+                    resolve();
+                }
+            );
+        });
+    }
+}
+
