@@ -4,16 +4,17 @@ import ParamMethodNgStore from '../models/param-method-ng-store';
 import { getActionsTemplate } from '../templates/angular-store/action.template';
 import { getEffectsTemplate } from '../templates/angular-store/effect.template';
 import { getReducersTemplate } from '../templates/angular-store/reducer.template';
+import { removeWordModel } from './utils';
 
 
 export function createAction(data: ParamMethodNgStore) {
 
     const targetDirectory = data.targetDirectory;
 
-    const targetPath = `${targetDirectory}/actions/${data.fileName}.actions.ts`;
+    const targetPath = `${targetDirectory}/actions/${removeWordModel(data.fileName)}.actions.ts`;
 
     if (existsSync(targetPath)) {
-        throw Error(`${data.fileName}.actions.ts ya existe`);
+        throw Error(`${removeWordModel(data.fileName)}.actions.ts ya existe`);
     }
     return new Promise(async (resolve, reject) => {
         writeFile(
@@ -39,10 +40,10 @@ export function createReducer(data: ParamMethodNgStore) {
 
     const targetDirectory = data.targetDirectory;
 
-    const targetPath = `${targetDirectory}/reducers/${data.fileName}.reducers.ts`;
+    const targetPath = `${targetDirectory}/reducers/${removeWordModel(data.fileName)}.reducers.ts`;
 
     if (existsSync(targetPath)) {
-        throw Error(`${data.fileName}.reducers.ts ya existe`);
+        throw Error(`${removeWordModel(data.fileName)}.reducers.ts ya existe`);
     }
     return new Promise(async (resolve, reject) => {
         writeFile(
@@ -68,10 +69,10 @@ export function createEffect(data: ParamMethodNgStore) {
 
     const targetDirectory = data.targetDirectory;
 
-    const targetPath = `${targetDirectory}/effects/${data.fileName}.effects.ts`;
+    const targetPath = `${targetDirectory}/effects/${removeWordModel(data.fileName)}.effects.ts`;
 
     if (existsSync(targetPath)) {
-        throw Error(`${data.fileName}.effects.ts ya existe`);
+        throw Error(`${removeWordModel(data.fileName)}.effects.ts ya existe`);
     }
     return new Promise(async (resolve, reject) => {
         writeFile(

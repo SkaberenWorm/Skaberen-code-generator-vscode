@@ -101,6 +101,7 @@ async function generateAllCode(modelName: string, fileName: string, targetDirect
     targetDirectory: targetDirectory,
     methodsSelected: methodsSelected,
   });
+  console.log("data", data);
   await Promise.all([
     createAction(data),
     createEffect(data),

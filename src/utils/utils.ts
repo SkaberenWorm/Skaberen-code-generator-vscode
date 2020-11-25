@@ -55,3 +55,13 @@ export function isFem(sexEntity: string): boolean {
 export function toLowerCaseFirstLetter(word: string) {
     return word[0].toLowerCase() + word.slice(1);
 }
+
+/**
+ * Remplaza las palabras ('Model', '-model') por '' 
+ * 
+ * @param word 
+ */
+export function removeWordModel(word: string) {
+    return word.replace('Model', '').replace('-model', '');
+}
+

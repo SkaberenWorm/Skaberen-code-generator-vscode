@@ -1,5 +1,6 @@
 import Checkbox from '../../models/checkbox';
 import { METHOD } from '../../models/method-actions';
+import { removeWordModel, toLowerCaseFirstLetter } from '../../utils/utils';
 
 export function getActionsTemplate(
   fileName: string,
@@ -10,10 +11,10 @@ export function getActionsTemplate(
   const typePrefix = fileName.toUpperCase().replace(new RegExp('-', 'g'), ' ');
 
   return `import { createAction, props } from '@ngrx/store';
-//import { SearchPagination } from 'src/app/commons/interfaces/search.pagination';
-import { ${modelName} } from 'src/app/commons/models/${fileName}.model';
+import { SearchPagination } from 'src/app/commons/interfaces/search.pagination';
+import { ${modelName} } from 'src/app/commons/models/${removeWordModel(fileName)}.model';
 ${insertMethods(typePrefix, modelName, methods)}
-  `;
+`;
 }
 
 
@@ -55,76 +56,76 @@ function insertMethods(typePrefix: string, modelName: string, methods: Array<Che
 
 
 function insertMethodFindById(typePrefix: string, modelName: string) {
-  return `export const buscar${modelName} = createAction(
-    '[${typePrefix}] buscar por ID',
-    props<{ searchPagination: SearchPagination<string> }>()
+  return `export const buscar${removeWordModel(modelName)} = createAction(
+    '[${typePrefix}] Buscar por ID',
+    props<{ ${toLowerCaseFirstLetter(removeWordModel(modelName))}Id: number }>()
 );
-export const buscar${modelName}Success = createAction(
-    '[${typePrefix}] buscar por ID success',
-    props<{ respuesta: ${modelName} }>()
+export const buscar${removeWordModel(modelName)}Success = createAction(
+    '[${typePrefix}] Buscar por ID success',
+    props<{ respuesta: ${modelName}, mensaje: string }>()
 );
-export const buscar${modelName}Fail = createAction(
-    '[${typePrefix}] buscar por ID fail',
+export const buscar${removeWordModel(modelName)}Fail = createAction(
+    '[${typePrefix}] Buscar por ID fail',
     props<{ mensaje: string }>()
 );`;
 }
 
 function insertMethodfindAllPaginatedBySearch(typePrefix: string, modelName: string) {
-  return `export const listar${modelName}Paginado = createAction(
-    '[${typePrefix}] listar paginado',
+  return `export const listar${removeWordModel(modelName)}Paginado = createAction(
+    '[${typePrefix}] Listar paginado',
     props<{ searchPagination: SearchPagination<string> }>()
 );
-export const listar${modelName}PaginadoSuccess = createAction(
-    '[${typePrefix}] listar paginado success',
+export const listar${removeWordModel(modelName)}PaginadoSuccess = createAction(
+    '[${typePrefix}] Listar paginado success',
     props<{ respuesta: IPaginacion<${modelName}> }>()
 );
-export const listar${modelName}PaginadoFail = createAction(
-    '[${typePrefix}] listar paginado fail',
+export const listar${removeWordModel(modelName)}PaginadoFail = createAction(
+    '[${typePrefix}] Listar paginado fail',
     props<{ mensaje: string }>()
 );`;
 }
 
 function insertMethodSave(typePrefix: string, modelName: string) {
-  return `export const guardar${modelName} = createAction(
-    '[${typePrefix}] guardar ${modelName}',
-    props<{ searchPagination: SearchPagination<string> }>()
+  return `export const guardar${removeWordModel(modelName)} = createAction(
+    '[${typePrefix}] Guardar ${removeWordModel(modelName)}',
+    props<{ ${toLowerCaseFirstLetter(removeWordModel(modelName))}: ${modelName} }>()
 );
-export const guardar${modelName}Success = createAction(
-    '[${typePrefix}] guardar ${modelName} success',
-    props<{ respuesta: ${modelName} , mensaje: string}>()
+export const guardar${removeWordModel(modelName)}Success = createAction(
+    '[${typePrefix}] Guardar ${removeWordModel(modelName)} success',
+    props<{ respuesta: ${modelName}, mensaje: string}>()
 );
-export const guardar${modelName}Fail = createAction(
-    '[${typePrefix}] guardar ${modelName} fail',
+export const guardar${removeWordModel(modelName)}Fail = createAction(
+    '[${typePrefix}] Guardar ${removeWordModel(modelName)} fail',
     props<{ mensaje: string }>()
 );`;
 }
 
 function insertMethodUpdate(typePrefix: string, modelName: string) {
-  return `export const actualizar${modelName} = createAction(
-    '[${typePrefix}] Actualizar ${modelName}',
-    props<{ searchPagination: SearchPagination<string> }>()
+  return `export const actualizar${removeWordModel(modelName)} = createAction(
+    '[${typePrefix}] Actualizar ${removeWordModel(modelName)}',
+    props<{ ${toLowerCaseFirstLetter(removeWordModel(modelName))}: ${modelName} }>()
 );
-export const actualizar${modelName}Success = createAction(
-    '[${typePrefix}] Actualizar ${modelName} success',
+export const actualizar${removeWordModel(modelName)}Success = createAction(
+    '[${typePrefix}] Actualizar ${removeWordModel(modelName)} success',
     props<{ respuesta: ${modelName}, mensaje: string }>()
 );
-export const actualizar${modelName}Fail = createAction(
-    '[${typePrefix}] Actualizar ${modelName} fail',
+export const actualizar${removeWordModel(modelName)}Fail = createAction(
+    '[${typePrefix}] Actualizar ${removeWordModel(modelName)} fail',
     props<{ mensaje: string }>()
 );`;
 }
 
 function insertMethodChangeState(typePrefix: string, modelName: string) {
   return `export const cambiarEstado${modelName} = createAction(
-    '[${typePrefix}] cambiar estado',
-    props<{ searchPagination: SearchPagination<string> }>()
+    '[${typePrefix}] Cambiar estado',
+    props<{ ${toLowerCaseFirstLetter(removeWordModel(modelName))}Id: number }>()
 );
 export const cambiarEstado${modelName}Success = createAction(
-    '[${typePrefix}] cambiar estado success',
+    '[${typePrefix}] Cambiar estado success',
     props<{ respuesta: ${modelName} }>()
 );
 export const cambiarEstado${modelName}Fail = createAction(
-    '[${typePrefix}] cambiar estado fail',
+    '[${typePrefix}] Cambiar estado fail',
     props<{ mensaje: string }>()
 );`;
 }
@@ -132,7 +133,7 @@ export const cambiarEstado${modelName}Fail = createAction(
 function insertMethodDelete(typePrefix: string, modelName: string) {
   return `export const eliminar${modelName} = createAction(
     '[${typePrefix}] Eliminar ${modelName}',
-    props<{ searchPagination: SearchPagination<string> }>()
+    props<{ ${toLowerCaseFirstLetter(removeWordModel(modelName))}Id: number }>()
 );
 export const eliminar${modelName}Success = createAction(
     '[${typePrefix}] Eliminar ${modelName} success',
