@@ -102,7 +102,7 @@ function insertMethodFindById(entityName: string, entityNameFirstLetterToLowerCa
 }
 
 function insertMethodfindAll(entityName: string, entityNameFirstLetterToLowerCase: string) {
-	return `@GetMapping("/page-all-by-search")
+	return `@GetMapping("/find-all")
 		public ResponseEntity<ResultadoProc<List<${entityName}>>> findAll() {
 			ResultadoProc<List<${entityName}>> salida = ${entityNameFirstLetterToLowerCase}Service.findAll();
 			return new ResponseEntity<ResultadoProc<List<${entityName}>>>(salida, HttpStatus.OK);
@@ -110,7 +110,7 @@ function insertMethodfindAll(entityName: string, entityNameFirstLetterToLowerCas
 }
 
 function insertMethodfindAllActive(entityName: string, entityNameFirstLetterToLowerCase: string) {
-	return `@GetMapping("/page-all-by-search")
+	return `@GetMapping("/find-all-active")
 		public ResponseEntity<ResultadoProc<List<${entityName}>>> findAllActive() {
 			ResultadoProc<List<${entityName}>> salida = ${entityNameFirstLetterToLowerCase}Service.findAllActive();
 			return new ResponseEntity<ResultadoProc<List<${entityName}>>>(salida, HttpStatus.OK);
