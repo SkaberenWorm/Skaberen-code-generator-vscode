@@ -8,7 +8,7 @@
 This extension will save you time:
 
 - **Spring boot**: Generates a complete REST API, creating entities, services, repositories and controllers.
-- **NgRx**: Generates actions, effects and reducers simply by indicating the name of the mode.
+- **NgRx**: Generates actions, effects and reducers simply by indicating the name of the model.
 
 ## Requirements
 - Instalar extensión [Lombok Annotations Support for VS Code](https://marketplace.visualstudio.com/items?itemName=GabrielBB.vscode-lombok)
