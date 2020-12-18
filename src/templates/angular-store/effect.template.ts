@@ -3,12 +3,12 @@ import { METHOD } from '../../models/method-actions';
 import { removeWordModel, toLowerCaseFirstLetter } from '../../utils/utils';
 
 export function getEffectsTemplate(
-  fileName: string,
-  modelName: string,
-  methods: Array<Checkbox>
+	fileName: string,
+	modelName: string,
+	methods: Array<Checkbox>
 ): string {
 
-  return `import { Injectable } from '@angular/core';
+	return `import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { ToastrService } from 'ngx-toastr';
 import { of } from 'rxjs';
@@ -31,45 +31,45 @@ ${insertMethods(modelName, methods)}
 
 
 function insertMethods(modelName: string, methods: Array<Checkbox>) {
-  let code = '';
-  methods.forEach(method => {
-    if (method.checked) {
-      switch (method.method) {
-        case METHOD.findById:
-          code += '\n\n';
-          code += insertMethodFindById(modelName);
-          break;
-        case METHOD.findAllPaginatedBySearch:
-          code += '\n\n';
-          code += insertMethodfindAllPaginatedBySearch(modelName);
-          break;
-        case METHOD.save:
-          code += '\n\n';
-          code += insertMethodSave(modelName);
-          break;
-        case METHOD.update:
-          code += '\n\n';
-          code += insertMethodUpdate(modelName);
-          break;
-        case METHOD.changeState:
-          code += '\n\n';
-          code += insertMethodChangeState(modelName);
-          break;
-        case METHOD.delete:
-          code += '\n\n';
-          code += insertMethodDelete(modelName);
-          break;
-      }
-    }
+	let code = '';
+	methods.forEach(method => {
+		if (method.checked) {
+			switch (method.method) {
+				case METHOD.findById:
+					code += '\n\n';
+					code += insertMethodFindById(modelName);
+					break;
+				case METHOD.findAllPaginatedBySearch:
+					code += '\n\n';
+					code += insertMethodfindAllPaginatedBySearch(modelName);
+					break;
+				case METHOD.save:
+					code += '\n\n';
+					code += insertMethodSave(modelName);
+					break;
+				case METHOD.update:
+					code += '\n\n';
+					code += insertMethodUpdate(modelName);
+					break;
+				case METHOD.changeState:
+					code += '\n\n';
+					code += insertMethodChangeState(modelName);
+					break;
+				case METHOD.delete:
+					code += '\n\n';
+					code += insertMethodDelete(modelName);
+					break;
+			}
+		}
 
-  });
-  return code;
+	});
+	return code;
 }
 
 
 function insertMethodFindById(modelName: string) {
-  const modelNameSinModel = removeWordModel(modelName);
-  return `
+	const modelNameSinModel = removeWordModel(modelName);
+	return `
     buscar${modelNameSinModel}$ = createEffect(() =>
         this.actions$.pipe(
             ofType(${toLowerCaseFirstLetter(modelNameSinModel)}Actions.buscar${modelNameSinModel}),
@@ -94,8 +94,8 @@ function insertMethodFindById(modelName: string) {
 }
 
 function insertMethodfindAllPaginatedBySearch(modelName: string) {
-  const modelNameSinModel = removeWordModel(modelName);
-  return `
+	const modelNameSinModel = removeWordModel(modelName);
+	return `
     listar${modelNameSinModel}Paginado$ = createEffect(() =>
         this.actions$.pipe(
             ofType(${toLowerCaseFirstLetter(modelNameSinModel)}Actions.listar${modelNameSinModel}Paginado),
@@ -119,8 +119,8 @@ function insertMethodfindAllPaginatedBySearch(modelName: string) {
 }
 
 function insertMethodSave(modelName: string) {
-  const modelNameSinModel = removeWordModel(modelName);
-  return `
+	const modelNameSinModel = removeWordModel(modelName);
+	return `
     guardar${modelNameSinModel}$ = createEffect(() =>
         this.actions$.pipe(
             ofType(${toLowerCaseFirstLetter(modelNameSinModel)}Actions.guardar${modelNameSinModel}),
@@ -146,8 +146,8 @@ function insertMethodSave(modelName: string) {
 }
 
 function insertMethodUpdate(modelName: string) {
-  const modelNameSinModel = removeWordModel(modelName);
-  return `
+	const modelNameSinModel = removeWordModel(modelName);
+	return `
     actualizar${modelNameSinModel}$ = createEffect(() =>
         this.actions$.pipe(
             ofType(${toLowerCaseFirstLetter(modelNameSinModel)}Actions.actualizar${modelNameSinModel}),
@@ -173,8 +173,8 @@ function insertMethodUpdate(modelName: string) {
 }
 
 function insertMethodChangeState(modelName: string) {
-  const modelNameSinModel = removeWordModel(modelName);
-  return `
+	const modelNameSinModel = removeWordModel(modelName);
+	return `
     cambiarEstado${modelNameSinModel}$ = createEffect(() =>
         this.actions$.pipe(
             ofType(${toLowerCaseFirstLetter(modelNameSinModel)}Actions.cambiarEstado${modelNameSinModel}),
@@ -200,7 +200,7 @@ function insertMethodChangeState(modelName: string) {
 }
 
 function insertMethodDelete(modelName: string) {
-  return ``;
+	return ``;
 }
 
 

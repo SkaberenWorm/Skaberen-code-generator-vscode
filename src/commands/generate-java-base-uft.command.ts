@@ -13,6 +13,7 @@ import {
   createService,
   createUtilResultadoProcIfNotExist,
   createUtilSearchPaginationIfNotExist,
+  createUtilUtilIfNotExist,
 } from '../utils/generate-code-java-uft.utils';
 import { createDirectory, promptForTargetDirectory } from '../utils/utils';
 
@@ -48,10 +49,6 @@ export const generateCodeJavaBase = async (uri: Uri) => {
     }
   }
 
-  const sexEntityOpt = await window.showQuickPick([`La ${entityName}`, `El ${entityName}`], {
-    placeHolder: 'Sexo de la clase',
-  });
-  const sexEntity = sexEntityOpt === `La ${entityName}` ? 'F' : 'M';
 
   const metodosChecboxes: Array<Checkbox> = methods;
 
@@ -75,7 +72,7 @@ export const generateCodeJavaBase = async (uri: Uri) => {
   const useUtilClass = useUtilClassOpt === `Usar clases locales`;
 
   try {
-    await generateAllCode(entityName, targetDirectory, typeVariableID, metodosChecboxes, sexEntity, useUtilClass);
+    await generateAllCode(entityName, targetDirectory, typeVariableID, metodosChecboxes, useUtilClass);
     window.showInformationMessage(
       `Exito! Código ${entityName} generado correctamente`
     );
@@ -102,7 +99,7 @@ function promptForTypeVariable(): Thenable<string | undefined> {
   return window.showInputBox(entityNamePromptOptions);
 }
 
-async function generateAllCode(entityName: string, targetDirectory: string, typeVariableID: string, methodsSelected: Array<Checkbox>, sexEntity: string, useUtilClass: boolean) {
+async function generateAllCode(entityName: string, targetDirectory: string, typeVariableID: string, methodsSelected: Array<Checkbox>, useUtilClass: boolean) {
   if (!existsSync(`${targetDirectory}/entities`)) {
     await createDirectory(`${targetDirectory}/entities`);
   }
@@ -127,7 +124,6 @@ async function generateAllCode(entityName: string, targetDirectory: string, type
     targetDirectory: targetDirectory,
     typeVariableID: typeVariableID,
     methodsSelected: methodsSelected,
-    sexEntity: sexEntity,
     useUtilClass: useUtilClass,
   });
   await Promise.all([
@@ -141,6 +137,7 @@ async function generateAllCode(entityName: string, targetDirectory: string, type
     await Promise.all([
       createUtilResultadoProcIfNotExist(data),
       createUtilSearchPaginationIfNotExist(data),
+      createUtilUtilIfNotExist(data),
     ]);
   }
 

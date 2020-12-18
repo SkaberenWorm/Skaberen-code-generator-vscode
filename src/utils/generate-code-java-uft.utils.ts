@@ -8,10 +8,11 @@ import { getRepositoryTemplate } from '../templates/java-base-uft/repository.tem
 import { getResultadoProcTemplate } from '../templates/java-base-uft/resultado-proc.template';
 import { getSearchPaginationTemplate } from '../templates/java-base-uft/search-pagination.template';
 import { getServiceTemplate } from '../templates/java-base-uft/service.template';
+import { getUtilTemplate } from '../templates/java-base-uft/util.template';
 import { generatedVersionUID } from './utils';
 
 
-export function createEntity(param: ParamMethodJava) {
+export function createEntity(param: ParamMethodJava): Promise<void> | undefined {
 
     const entityName = param.entityName;
     const targetDirectory = param.targetDirectory;
@@ -40,7 +41,7 @@ export function createEntity(param: ParamMethodJava) {
     });
 }
 
-export function createRepository(param: ParamMethodJava) {
+export function createRepository(param: ParamMethodJava): Promise<void> | undefined {
 
     const entityName = param.entityName;
     const targetDirectory = param.targetDirectory;
@@ -69,7 +70,7 @@ export function createRepository(param: ParamMethodJava) {
     });
 }
 
-export function createIService(param: ParamMethodJava) {
+export function createIService(param: ParamMethodJava): Promise<void> | undefined {
 
     const entityName = param.entityName;
     const targetDirectory = param.targetDirectory;
@@ -91,7 +92,6 @@ export function createIService(param: ParamMethodJava) {
                 packageUtil,
                 param.typeVariableID,
                 param.methodsSelected,
-                param.sexEntity,
                 param.useUtilClass,
             ),
             "utf8",
@@ -103,7 +103,7 @@ export function createIService(param: ParamMethodJava) {
     });
 }
 
-export function createService(param: ParamMethodJava) {
+export function createService(param: ParamMethodJava): Promise<void> | undefined {
 
     const entityName = param.entityName;
     const targetDirectory = param.targetDirectory;
@@ -129,7 +129,6 @@ export function createService(param: ParamMethodJava) {
                 packageRepository,
                 param.typeVariableID,
                 param.methodsSelected,
-                param.sexEntity,
                 param.useUtilClass),
             "utf8",
             (error) => {
@@ -141,7 +140,7 @@ export function createService(param: ParamMethodJava) {
 }
 
 
-export function createController(param: ParamMethodJava) {
+export function createController(param: ParamMethodJava): Promise<void> | undefined {
 
     const entityName = param.entityName;
     const targetDirectory = param.targetDirectory;
@@ -177,7 +176,7 @@ export function createController(param: ParamMethodJava) {
 }
 
 
-export function createUtilResultadoProcIfNotExist(param: ParamMethodJava) {
+export function createUtilResultadoProcIfNotExist(param: ParamMethodJava): Promise<void> | undefined {
     const targetDirectory = param.targetDirectory;
     const targetPath = `${targetDirectory}/utils/ResultadoProc.java`;
     const packageUtil = `${targetDirectory.substring(targetDirectory.indexOf("src/main/java/"), targetDirectory.length)}.utils`.replace(new RegExp('/', 'g'), '.').replace('src.main.java.', '');
@@ -199,7 +198,7 @@ export function createUtilResultadoProcIfNotExist(param: ParamMethodJava) {
     }
 }
 
-export function createUtilSearchPaginationIfNotExist(param: ParamMethodJava) {
+export function createUtilSearchPaginationIfNotExist(param: ParamMethodJava): Promise<void> | undefined {
     const targetDirectory = param.targetDirectory;
     const targetPath = `${targetDirectory}/utils/SearchPagination.java`;
     const packageUtil = `${targetDirectory.substring(targetDirectory.indexOf("src/main/java/"), targetDirectory.length)}.utils`.replace(new RegExp('/', 'g'), '.').replace('src.main.java.', '');
@@ -211,6 +210,25 @@ export function createUtilSearchPaginationIfNotExist(param: ParamMethodJava) {
                     packageUtil,
                     generatedVersionUID()
                 ),
+                "utf8",
+                (error) => {
+                    if (error) { reject(error); return; }
+                    resolve();
+                }
+            );
+        });
+    }
+}
+
+export function createUtilUtilIfNotExist(param: ParamMethodJava): Promise<void> | undefined {
+    const targetDirectory = param.targetDirectory;
+    const targetPath = `${targetDirectory}/utils/Util.java`;
+    const packageUtil = `${targetDirectory.substring(targetDirectory.indexOf("src/main/java/"), targetDirectory.length)}.utils`.replace(new RegExp('/', 'g'), '.').replace('src.main.java.', '');
+    if (!existsSync(targetPath)) {
+        return new Promise(async (resolve, reject) => {
+            writeFile(
+                targetPath,
+                getUtilTemplate(packageUtil),
                 "utf8",
                 (error) => {
                     if (error) { reject(error); return; }

@@ -2,7 +2,7 @@ import Checkbox from '../../models/checkbox';
 import { METHOD } from '../../models/method-actions';
 
 export function getRepositoryTemplate(
-  repositoryName: string,
+  entityName: string,
   packageRepository: string,
   packageEntity: string,
   typeVariableID: string,
@@ -26,22 +26,24 @@ export function getRepositoryTemplate(
   }
   return `package ${packageRepository};
 
-  import org.springframework.data.domain.Page;
-  import org.springframework.data.domain.Pageable;
-  import org.springframework.data.jpa.repository.JpaRepository;
-  import org.springframework.data.jpa.repository.Query;
-  import org.springframework.stereotype.Repository;
-  
-  import ${packageEntity}.${repositoryName};
-  
-  @Repository
-  public interface ${repositoryName}Repository extends JpaRepository<${repositoryName}, ${ID}> {
-  ${insertMethods(repositoryName, methods)}
-  }
+import java.util.List;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
+
+import ${packageEntity}.${entityName};
+
+@Repository
+public interface ${entityName}Repository extends JpaRepository<${entityName}, ${ID}> {
+  ${insertMethods(entityName, methods)}
+}
 `;
 }
 
-function insertMethods(pascalCaseControllerName: string, methods: Array<Checkbox>) {
+function insertMethods(entityName: string, methods: Array<Checkbox>) {
   let code = '';
   methods.forEach(method => {
     if (method.checked) {
@@ -49,15 +51,11 @@ function insertMethods(pascalCaseControllerName: string, methods: Array<Checkbox
 
         case METHOD.findAllPaginatedBySearch:
           code += '\n\n\t';
-          code += insertMethodfindAllPaginatedBySearch(pascalCaseControllerName);
+          code += insertMethodfindAllPaginatedBySearch(entityName);
           break;
-        case METHOD.changeState:
+        case METHOD.findAllActive:
           code += '\n\n\t';
-          code += insertMethodChangeState(pascalCaseControllerName);
-          break;
-        case METHOD.delete:
-          code += '\n\n\t';
-          code += insertMethodDelete(pascalCaseControllerName);
+          code += insertMethodfindAllActive(entityName);
           break;
       }
     }
@@ -66,20 +64,27 @@ function insertMethods(pascalCaseControllerName: string, methods: Array<Checkbox
   return code;
 }
 
-
-
-function insertMethodfindAllPaginatedBySearch(pascalCaseControllerName: string) {
-  return `// @Query("select p from ${pascalCaseControllerName} p where p._ATRIBUTO_ like %1%")
-  @Query("select p from ${pascalCaseControllerName} p")
-  Page<${pascalCaseControllerName}> findAllBySearch(String search, Pageable pageable);`;
+function insertMethodfindAllPaginatedBySearch(entityName: string) {
+  return `/**
+  * Returns a {@link Page} of the {@link ${entityName}} type that match the search.
+  * 
+  * @param pageable {@link Pageable}
+  * @param search   Text to search within the attributes of the {@link ${entityName}} entity
+  * @return {@link Page} of the {@link ${entityName}}
+  */
+  // @Query("select p from ${entityName} p where p._ATRIBUTO_ like %?1%")
+  @Query("select p from ${entityName} p")
+  Page<${entityName}> findAllBySearch(String search, Pageable pageable);`;
 }
 
-function insertMethodChangeState(pascalCaseControllerName: string) {
-  return ``;
-}
-
-function insertMethodDelete(pascalCaseControllerName: string) {
-  return ``;
+function insertMethodfindAllActive(entityName: string) {
+  return `/**
+  * Returns all active instances of the type {@link ${entityName}} 
+  * 
+  * @return all active entities {@link ${entityName}}
+  */
+  @Query("select p from ${entityName} p where p.activo = 1")
+  List<${entityName}> findAllActive();`;
 }
 
 

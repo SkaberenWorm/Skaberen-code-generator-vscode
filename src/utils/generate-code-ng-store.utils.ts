@@ -7,7 +7,7 @@ import { getReducersTemplate } from '../templates/angular-store/reducer.template
 import { removeWordModel } from './utils';
 
 
-export function createAction(data: ParamMethodNgStore) {
+export function createAction(data: ParamMethodNgStore): Promise<void> | undefined {
 
     const targetDirectory = data.targetDirectory;
 
@@ -36,7 +36,7 @@ export function createAction(data: ParamMethodNgStore) {
     });
 }
 
-export function createReducer(data: ParamMethodNgStore) {
+export function createReducer(data: ParamMethodNgStore): Promise<void> | undefined {
 
     const targetDirectory = data.targetDirectory;
 
@@ -65,7 +65,7 @@ export function createReducer(data: ParamMethodNgStore) {
     });
 }
 
-export function createEffect(data: ParamMethodNgStore) {
+export function createEffect(data: ParamMethodNgStore): Promise<void> | undefined {
 
     const targetDirectory = data.targetDirectory;
 

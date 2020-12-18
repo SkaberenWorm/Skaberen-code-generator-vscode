@@ -1,6 +1,6 @@
 import Checkbox from '../../models/checkbox';
 import { METHOD } from '../../models/method-actions';
-import { isFem, toLowerCaseFirstLetter } from '../../utils/utils';
+import { toLowerCaseFirstLetter } from '../../utils/utils';
 
 export function getIServiceTemplate(
   entityName: string,
@@ -9,12 +9,13 @@ export function getIServiceTemplate(
   packageUtil: string,
   typeVariableID: string,
   methods: Array<Checkbox>,
-  sexEntity: string,
   useUtilClass: boolean,
 ): string {
 
   const entityNameFirstLetterToLowerCase = toLowerCaseFirstLetter(entityName);
   return `package ${packageIService};
+
+import java.util.List;
   
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -23,39 +24,47 @@ import ${useUtilClass ? packageUtil + '.ResultadoProc;' : 'cl.uft.commons.model.
 import ${packageEntity}.${entityName};
 
 public interface I${entityName}Service {
-${insertMethods(entityName, entityNameFirstLetterToLowerCase, typeVariableID, methods, sexEntity)}
+${insertMethods(entityName, entityNameFirstLetterToLowerCase, typeVariableID, methods)}
 }
 `;
 }
 
-function insertMethods(entityName: string, entityNameFirstLetterToLowerCase: string, typeVariableID: string, methods: Array<Checkbox>, sexEntity: string) {
+function insertMethods(entityName: string, entityNameFirstLetterToLowerCase: string, typeVariableID: string, methods: Array<Checkbox>) {
   let code = '';
   methods.forEach(method => {
     if (method.checked) {
       switch (method.method) {
         case METHOD.findById:
           code += '\n\n\t';
-          code += insertMethodFindById(entityName, entityNameFirstLetterToLowerCase, typeVariableID, sexEntity);
+          code += insertMethodFindById(entityName, entityNameFirstLetterToLowerCase, typeVariableID);
+          break;
+        case METHOD.findAll:
+          code += '\n\n\t';
+          code += insertMethodFindAll(entityName);
+          break;
+        case METHOD.findAllActive:
+          code += '\n\n\t';
+          code += insertMethodFindAllActive(entityName);
           break;
         case METHOD.findAllPaginatedBySearch:
           code += '\n\n\t';
-          code += insertMethodfindAllPaginatedBySearch(entityName, sexEntity);
+          code += insertMethodFindAllPaginatedBySearch(entityName);
           break;
         case METHOD.save:
           code += '\n\n\t';
-          code += insertMethodSave(entityName, entityNameFirstLetterToLowerCase, sexEntity);
+          code += insertMethodSave(entityName, entityNameFirstLetterToLowerCase);
           break;
         case METHOD.update:
           code += '\n\n\t';
-          code += insertMethodUpdate(entityName, entityNameFirstLetterToLowerCase, sexEntity);
+          code += insertMethodUpdate(entityName, entityNameFirstLetterToLowerCase);
           break;
         case METHOD.changeState:
           code += '\n\n\t';
-          code += insertMethodChangeState(entityName, entityNameFirstLetterToLowerCase, sexEntity);
+          code += insertMethodChangeState(entityName, entityNameFirstLetterToLowerCase);
           break;
         case METHOD.delete:
           code += '\n\n\t';
-          code += insertMethodDelete(entityName, entityNameFirstLetterToLowerCase, sexEntity);
+          code += insertMethodDelete(entityName, entityNameFirstLetterToLowerCase);
           break;
       }
     }
@@ -64,53 +73,71 @@ function insertMethods(entityName: string, entityNameFirstLetterToLowerCase: str
   return code;
 }
 
-
-function insertMethodFindById(entityName: string, entityNameFirstLetterToLowerCase: string, typeVariableID: string, sexEntity: string) {
+function insertMethodFindById(entityName: string, entityNameFirstLetterToLowerCase: string, typeVariableID: string) {
   return `/**
-  * Obtiene ${isFem(sexEntity) ? 'una' : 'un'} {@link ${entityName}} por su identificador
+  * Retrieves an entity {@link ${entityName}} by its identifier
   * 
-  * @param ${entityNameFirstLetterToLowerCase}Id Identificador ${isFem(sexEntity) ? 'de la' : 'del'} {@link ${entityName}}
-  * @return {@link ${entityName}} coincidente con el identificador
+  * @param ${entityNameFirstLetterToLowerCase}Id Identifier  {@link ${entityName}}
+  * @return {@link ${entityName}} with the given id
   */
   ResultadoProc<${entityName}> findById(${typeVariableID} ${entityNameFirstLetterToLowerCase}Id);`;
 }
 
-function insertMethodfindAllPaginatedBySearch(entityName: string, sexEntity: string) {
+function insertMethodFindAll(entityName: string) {
   return `/**
-  * Obtiene un {@link Page} de ${isFem(sexEntity) ? 'todas las' : 'todos los'} {@link ${entityName}} que coincidan con lo buscado
+  * Returns all instances of the type {@link ${entityName}} 
   * 
-  * @param pageable {@link PageRequest} contiene los datos de la paginación
-  * @param search   Texto a buscar dentro de los atributos ${isFem(sexEntity) ? 'de la' : 'del'} {@link ${entityName}}
-  * @return {@link Page} ${isFem(sexEntity) ? 'de las' : 'de los'} {@link ${entityName}} coincidentes con lo buscado
+  * @return all entities {@link ${entityName}}
+  */
+  ResultadoProc<List<${entityName}>> findAll();`;
+}
+
+function insertMethodFindAllActive(entityName: string) {
+  return `/**
+  * Returns all active instances of the type {@link ${entityName}} 
+  * 
+  * @return all active entities {@link ${entityName}}
+  */
+  ResultadoProc<List<${entityName}>> findAllActive();`;
+}
+
+
+function insertMethodFindAllPaginatedBySearch(entityName: string) {
+  return `/**
+  * Returns a {@link Page} of the {@link ${entityName}} type that match the search.
+  * 
+  * @param pageable {@link PageRequest}
+  * @param search   Text to search within the attributes of the {@link ${entityName}} entity
+  * @return {@link Page} of the {@link ${entityName}}
   */
   ResultadoProc<Page<${entityName}>> findAllPaginatedBySearch(String search, PageRequest pageable);`;
 }
 
-function insertMethodSave(entityName: string, entityNameFirstLetterToLowerCase: string, sexEntity: string) {
+function insertMethodSave(entityName: string, entityNameFirstLetterToLowerCase: string) {
   return `/**
-	 * Registra ${isFem(sexEntity) ? 'una nueva' : 'un nuevo'} {@link ${entityName}}
+	 * Saves a given entity {@link ${entityName}}
 	 * 
 	 * @param ${entityNameFirstLetterToLowerCase} {@link ${entityName}}
-	 * @return {@link ${entityName}} ${isFem(sexEntity) ? 'registrada' : 'registrado'}
+	 * @return the saved entity
 	 */
   ResultadoProc<${entityName}> save(${entityName} ${entityNameFirstLetterToLowerCase});`;
 }
 
-function insertMethodUpdate(entityName: string, entityNameFirstLetterToLowerCase: string, sexEntity: string) {
+function insertMethodUpdate(entityName: string, entityNameFirstLetterToLowerCase: string) {
   return `/**
-  * Actualiza ${isFem(sexEntity) ? 'una nueva' : 'un nuevo'} {@link ${entityName}}
+  * Updates a given entity {@link ${entityName}}
   * 
   * @param ${entityNameFirstLetterToLowerCase} {@link ${entityName}}
-  * @return {@link ${entityName}} ${isFem(sexEntity) ? 'actualizada' : 'actualizado'}
+  * @return the updated entity
   */
   ResultadoProc<${entityName}> update(${entityName} ${entityNameFirstLetterToLowerCase}Param);`;
 }
 
-function insertMethodChangeState(entityName: string, entityNameFirstLetterToLowerCase: string, sexEntity: string) {
+function insertMethodChangeState(entityName: string, entityNameFirstLetterToLowerCase: string) {
   return ``;
 }
 
-function insertMethodDelete(entityName: string, entityNameFirstLetterToLowerCase: string, sexEntity: string) {
+function insertMethodDelete(entityName: string, entityNameFirstLetterToLowerCase: string) {
   return ``;
 }
 

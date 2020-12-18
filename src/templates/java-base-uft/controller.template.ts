@@ -3,7 +3,7 @@ import { METHOD } from '../../models/method-actions';
 import { snakeCaseRequestMapping, toLowerCaseFirstLetter } from '../../utils/utils';
 
 export function getControllerTemplate(
-	controllerName: string,
+	entityName: string,
 	packageController: string,
 	packageEntity: string,
 	packageUtil: string,
@@ -13,8 +13,10 @@ export function getControllerTemplate(
 	useUtilClass: boolean,
 ): string {
 
-	const controllerNameFirstLetterToLowerCase = toLowerCaseFirstLetter(controllerName);
+	const entityNameFirstLetterToLowerCase = toLowerCaseFirstLetter(entityName);
 	let template = `package ${packageController};
+
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -31,49 +33,57 @@ import org.springframework.web.bind.annotation.RestController;
 
 import ${useUtilClass ? packageUtil + '.ResultadoProc;' : 'cl.uft.commons.model.ResultadoProc;'}
 import ${useUtilClass ? packageUtil + '.SearchPagination;' : 'cl.uft.commons.model.SearchPagination;'}
-import ${packageEntity}.${controllerName};
-import ${packageIService}.I${controllerName}Service;
+import ${packageEntity}.${entityName};
+import ${packageIService}.I${entityName}Service;
 
 @RestController
-@RequestMapping("/api/${snakeCaseRequestMapping(controllerName)}")
-public class ${controllerName}RestController {
+@RequestMapping("/api/${snakeCaseRequestMapping(entityName)}")
+public class ${entityName}RestController {
 
 	@Autowired
-	I${controllerName}Service ${controllerNameFirstLetterToLowerCase}Service;
-${insertMethods(controllerName, controllerNameFirstLetterToLowerCase, typeVariableID, methods)}
+	I${entityName}Service ${entityNameFirstLetterToLowerCase}Service;
+${insertMethods(entityName, entityNameFirstLetterToLowerCase, typeVariableID, methods)}
 }`;
 
 	return template;
 }
 
-function insertMethods(controllerName: string, controllerNameFirstLetterToLowerCase: string, typeVariableID: string, methods: Array<Checkbox>) {
+function insertMethods(entityName: string, entityNameFirstLetterToLowerCase: string, typeVariableID: string, methods: Array<Checkbox>) {
 	let code = '';
 	methods.forEach(method => {
 		if (method.checked) {
 			switch (method.method) {
 				case METHOD.findById:
 					code += '\n\n\t';
-					code += insertMethodFindById(controllerName, controllerNameFirstLetterToLowerCase, typeVariableID);
+					code += insertMethodFindById(entityName, entityNameFirstLetterToLowerCase, typeVariableID);
+					break;
+				case METHOD.findAll:
+					code += '\n\n\t';
+					code += insertMethodfindAll(entityName, entityNameFirstLetterToLowerCase);
+					break;
+				case METHOD.findAllActive:
+					code += '\n\n\t';
+					code += insertMethodfindAllActive(entityName, entityNameFirstLetterToLowerCase);
 					break;
 				case METHOD.findAllPaginatedBySearch:
 					code += '\n\n\t';
-					code += insertMethodfindAllPaginatedBySearch(controllerName, controllerNameFirstLetterToLowerCase);
+					code += insertMethodfindAllPaginatedBySearch(entityName, entityNameFirstLetterToLowerCase);
 					break;
 				case METHOD.save:
 					code += '\n\n\t';
-					code += insertMethodSave(controllerName, controllerNameFirstLetterToLowerCase);
+					code += insertMethodSave(entityName, entityNameFirstLetterToLowerCase);
 					break;
 				case METHOD.update:
 					code += '\n\n\t';
-					code += insertMethodUpdate(controllerName, controllerNameFirstLetterToLowerCase);
+					code += insertMethodUpdate(entityName, entityNameFirstLetterToLowerCase);
 					break;
 				case METHOD.changeState:
 					code += '\n\n\t';
-					code += insertMethodChangeState(controllerName, controllerNameFirstLetterToLowerCase);
+					code += insertMethodChangeState(entityName, entityNameFirstLetterToLowerCase);
 					break;
 				case METHOD.delete:
 					code += '\n\n\t';
-					code += insertMethodDelete(controllerName, controllerNameFirstLetterToLowerCase);
+					code += insertMethodDelete(entityName, entityNameFirstLetterToLowerCase);
 					break;
 			}
 		}
@@ -83,46 +93,62 @@ function insertMethods(controllerName: string, controllerNameFirstLetterToLowerC
 }
 
 
-function insertMethodFindById(controllerName: string, controllerNameFirstLetterToLowerCase: string, typeVariableID: string) {
+function insertMethodFindById(entityName: string, entityNameFirstLetterToLowerCase: string, typeVariableID: string) {
 	return `@GetMapping("/{id}")
-	public ResponseEntity<ResultadoProc<${controllerName}>> findById(@PathVariable("id") ${typeVariableID} ${controllerNameFirstLetterToLowerCase}Id) {
-		ResultadoProc<${controllerName}> salida = ${controllerNameFirstLetterToLowerCase}Service.findById(${controllerNameFirstLetterToLowerCase}Id);
-		return new ResponseEntity<ResultadoProc<${controllerName}>>(salida, HttpStatus.OK);
+	public ResponseEntity<ResultadoProc<${entityName}>> findById(@PathVariable("id") ${typeVariableID} ${entityNameFirstLetterToLowerCase}Id) {
+		ResultadoProc<${entityName}> salida = ${entityNameFirstLetterToLowerCase}Service.findById(${entityNameFirstLetterToLowerCase}Id);
+		return new ResponseEntity<ResultadoProc<${entityName}>>(salida, HttpStatus.OK);
 	}`;
 }
 
-function insertMethodfindAllPaginatedBySearch(controllerName: string, controllerNameFirstLetterToLowerCase: string) {
-	return `@PostMapping("/page-all-by-search")
-		public ResponseEntity<ResultadoProc<Page<${controllerName}>>> findAllPaginatedBySearch(
-				@RequestBody SearchPagination<String> searchPagination) {
-			PageRequest pageable = searchPagination.getPageRequest();
-			String search = searchPagination.getSeek();
-			ResultadoProc<Page<${controllerName}>> salida = ${controllerNameFirstLetterToLowerCase}Service.findAllPaginatedBySearch(search,
-				pageable);
-			return new ResponseEntity<ResultadoProc<Page<${controllerName}>>>(salida, HttpStatus.OK);
+function insertMethodfindAll(entityName: string, entityNameFirstLetterToLowerCase: string) {
+	return `@GetMapping("/page-all-by-search")
+		public ResponseEntity<ResultadoProc<List<${entityName}>>> findAll() {
+			ResultadoProc<List<${entityName}>> salida = ${entityNameFirstLetterToLowerCase}Service.findAll();
+			return new ResponseEntity<ResultadoProc<List<${entityName}>>>(salida, HttpStatus.OK);
 		}`;
 }
 
-function insertMethodSave(controllerName: string, controllerNameFirstLetterToLowerCase: string) {
+function insertMethodfindAllActive(entityName: string, entityNameFirstLetterToLowerCase: string) {
+	return `@GetMapping("/page-all-by-search")
+		public ResponseEntity<ResultadoProc<List<${entityName}>>> findAllActive() {
+			ResultadoProc<List<${entityName}>> salida = ${entityNameFirstLetterToLowerCase}Service.findAllActive();
+			return new ResponseEntity<ResultadoProc<List<${entityName}>>>(salida, HttpStatus.OK);
+		}`;
+}
+
+function insertMethodfindAllPaginatedBySearch(entityName: string, entityNameFirstLetterToLowerCase: string) {
+	return `@PostMapping("/page-all-by-search")
+		public ResponseEntity<ResultadoProc<Page<${entityName}>>> findAllPaginatedBySearch(
+				@RequestBody SearchPagination<String> searchPagination) {
+			PageRequest pageable = searchPagination.getPageRequest();
+			String search = searchPagination.getSeek();
+			ResultadoProc<Page<${entityName}>> salida = ${entityNameFirstLetterToLowerCase}Service.findAllPaginatedBySearch(search,
+				pageable);
+			return new ResponseEntity<ResultadoProc<Page<${entityName}>>>(salida, HttpStatus.OK);
+		}`;
+}
+
+function insertMethodSave(entityName: string, entityNameFirstLetterToLowerCase: string) {
 	return `@PostMapping
-	public ResponseEntity<ResultadoProc<${controllerName}>> save(@RequestBody ${controllerName} ${controllerNameFirstLetterToLowerCase}) {
-		ResultadoProc<${controllerName}> salida = ${controllerNameFirstLetterToLowerCase}Service.save(${controllerNameFirstLetterToLowerCase});
-		return new ResponseEntity<ResultadoProc<${controllerName}>>(salida, HttpStatus.OK);
+	public ResponseEntity<ResultadoProc<${entityName}>> save(@RequestBody ${entityName} ${entityNameFirstLetterToLowerCase}) {
+		ResultadoProc<${entityName}> salida = ${entityNameFirstLetterToLowerCase}Service.save(${entityNameFirstLetterToLowerCase});
+		return new ResponseEntity<ResultadoProc<${entityName}>>(salida, HttpStatus.OK);
 	}`;
 }
 
-function insertMethodUpdate(controllerName: string, controllerNameFirstLetterToLowerCase: string) {
+function insertMethodUpdate(entityName: string, entityNameFirstLetterToLowerCase: string) {
 	return `@PutMapping
-	public ResponseEntity<ResultadoProc<${controllerName}>> update(@RequestBody ${controllerName} ${controllerNameFirstLetterToLowerCase}) {
-		ResultadoProc<${controllerName}> salida = ${controllerNameFirstLetterToLowerCase}Service.update(${controllerNameFirstLetterToLowerCase});
-		return new ResponseEntity<ResultadoProc<${controllerName}>>(salida, HttpStatus.OK);
+	public ResponseEntity<ResultadoProc<${entityName}>> update(@RequestBody ${entityName} ${entityNameFirstLetterToLowerCase}) {
+		ResultadoProc<${entityName}> salida = ${entityNameFirstLetterToLowerCase}Service.update(${entityNameFirstLetterToLowerCase});
+		return new ResponseEntity<ResultadoProc<${entityName}>>(salida, HttpStatus.OK);
 	}`;
 }
 
-function insertMethodChangeState(controllerName: string, controllerNameFirstLetterToLowerCase: string) {
+function insertMethodChangeState(entityName: string, entityNameFirstLetterToLowerCase: string) {
 	return ``;
 }
 
-function insertMethodDelete(controllerName: string, controllerNameFirstLetterToLowerCase: string) {
+function insertMethodDelete(entityName: string, entityNameFirstLetterToLowerCase: string) {
 	return ``;
 }
