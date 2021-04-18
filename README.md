@@ -129,7 +129,7 @@ The response will look like this
 
 
 ---
-## Result - Use ResultProc class
+## Result - Use ResultadoProc class
 
 ![Dec-17-2020 23-34-00](https://user-images.githubusercontent.com/13028053/102567497-62c66600-40c0-11eb-8d99-558c239cdf3b.gif)
 
