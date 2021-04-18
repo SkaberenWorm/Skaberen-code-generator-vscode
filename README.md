@@ -121,7 +121,7 @@ The response will look like this
 // Status: 404 Not found
 {
     "error": "true",
-    "mensaje": "Usuario no se encontrado",
+    "mensaje": "Usuario no encontrado",
     "resultado": null
 }
 ```
