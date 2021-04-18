@@ -58,7 +58,7 @@ The response will look like this
 // Status: 200 OK
 {
     "rut": "12345678-0",
-    "nombre": "Ismael Alexander",
+    "nombre": "Ismael",
     "apellido": "Cuevas",
     "email": "ismael.c.26a@gmail.com"
 }
@@ -111,7 +111,7 @@ The response will look like this
     "mensaje": "",
     "resultado": {
         "rut": "12345678-0",
-        "nombre": "Ismael Alexander",
+        "nombre": "Ismael",
         "apellido": "Cuevas",
         "email": "ismael.c.26a@gmail.com"
     }
