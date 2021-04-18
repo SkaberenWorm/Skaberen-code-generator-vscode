@@ -93,7 +93,7 @@ public ResponseEntity<ResultadoProc<Usuario>> findById(@PathVariable("id") int u
     try {
       final Usuario usuario = this.usuarioRepository.findById(usuarioId).orElse(null);
       if (usuario == null) {
-        salida.fallo("Usuario no se encontrado");
+        salida.fallo("Usuario no encontrado");
       }
       salida.exitoso(usuario);
     } catch (final Exception e) {
