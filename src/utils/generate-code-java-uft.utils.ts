@@ -93,6 +93,7 @@ export function createIService(param: ParamMethodJava): Promise<void> | undefine
                 param.typeVariableID,
                 param.methodsSelected,
                 param.useUtilClass,
+                param.useResulProc,
             ),
             "utf8",
             (error) => {
@@ -129,7 +130,9 @@ export function createService(param: ParamMethodJava): Promise<void> | undefined
                 packageRepository,
                 param.typeVariableID,
                 param.methodsSelected,
-                param.useUtilClass),
+                param.useUtilClass,
+                param.useResulProc,
+            ),
             "utf8",
             (error) => {
                 if (error) { reject(error); return; }
@@ -165,6 +168,7 @@ export function createController(param: ParamMethodJava): Promise<void> | undefi
                 param.typeVariableID,
                 param.methodsSelected,
                 param.useUtilClass,
+                param.useResulProc,
             ),
             "utf8",
             (error) => {
@@ -237,5 +241,41 @@ export function createUtilUtilIfNotExist(param: ParamMethodJava): Promise<void> 
             );
         });
     }
+}
+
+export function createExceptions(param: ParamMethodJava): Promise<void> | undefined {
+
+    const entityName = param.entityName;
+    const targetDirectory = param.targetDirectory;
+
+    const targetPath = `${targetDirectory}/controllers/${entityName}RestController.java`;
+    const packageController = `${targetDirectory.substring(targetDirectory.indexOf("src/main/java/"), targetDirectory.length)}.controllers`.replace(new RegExp('/', 'g'), '.').replace('src.main.java.', '');
+    const packageIService = `${targetDirectory.substring(targetDirectory.indexOf("src/main/java/"), targetDirectory.length)}.services`.replace(new RegExp('/', 'g'), '.').replace('src.main.java.', '');
+    const packageEntity = `${targetDirectory.substring(targetDirectory.indexOf("src/main/java/"), targetDirectory.length)}.entities`.replace(new RegExp('/', 'g'), '.').replace('src.main.java.', '');
+    const packageUtil = `${targetDirectory.substring(targetDirectory.indexOf("src/main/java/"), targetDirectory.length)}.utils`.replace(new RegExp('/', 'g'), '.').replace('src.main.java.', '');
+    if (existsSync(targetPath)) {
+        throw Error(`${entityName}RestController.java ya existe`);
+    }
+    return new Promise(async (resolve, reject) => {
+        writeFile(
+            targetPath,
+            getControllerTemplate(
+                entityName,
+                packageController,
+                packageEntity,
+                packageUtil,
+                packageIService,
+                param.typeVariableID,
+                param.methodsSelected,
+                param.useUtilClass,
+                param.useResulProc,
+            ),
+            "utf8",
+            (error) => {
+                if (error) { reject(error); return; }
+                resolve();
+            }
+        );
+    });
 }
 

@@ -11,6 +11,7 @@ export function getControllerTemplate(
 	typeVariableID: string,
 	methods: Array<Checkbox>,
 	useUtilClass: boolean,
+	useResultProc: boolean,
 ): string {
 
 	const entityNameFirstLetterToLowerCase = toLowerCaseFirstLetter(entityName);
@@ -31,9 +32,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import ${useUtilClass ? packageUtil + '.ResultadoProc;' : 'cl.uft.commons.model.ResultadoProc;'}
+${useResultProc ? `import ${useUtilClass ? packageUtil + '.ResultadoProc;' : 'cl.uft.commons.model.ResultadoProc;'}` : ''}
 import ${useUtilClass ? packageUtil + '.SearchPagination;' : 'cl.uft.commons.model.SearchPagination;'}
 import ${packageEntity}.${entityName};
+${!useResultProc ? `import com.example.demo.exceptions.EntityNotFoundException;\nimport com.example.demo.exceptions.ErrorProcessingException;` : ''}
 import ${packageIService}.I${entityName}Service;
 
 @RestController
@@ -42,20 +44,20 @@ public class ${entityName}RestController {
 
 	@Autowired
 	I${entityName}Service ${entityNameFirstLetterToLowerCase}Service;
-${insertMethods(entityName, entityNameFirstLetterToLowerCase, typeVariableID, methods)}
+${insertMethods(entityName, entityNameFirstLetterToLowerCase, typeVariableID, methods, useResultProc)}
 }`;
 
 	return template;
 }
 
-function insertMethods(entityName: string, entityNameFirstLetterToLowerCase: string, typeVariableID: string, methods: Array<Checkbox>) {
+function insertMethods(entityName: string, entityNameFirstLetterToLowerCase: string, typeVariableID: string, methods: Array<Checkbox>, useResultProc: boolean) {
 	let code = '';
 	methods.forEach(method => {
 		if (method.checked) {
 			switch (method.method) {
 				case METHOD.findById:
 					code += '\n\n\t';
-					code += insertMethodFindById(entityName, entityNameFirstLetterToLowerCase, typeVariableID);
+					code += insertMethodFindById(entityName, entityNameFirstLetterToLowerCase, typeVariableID, useResultProc);
 					break;
 				case METHOD.findAll:
 					code += '\n\n\t';
@@ -93,11 +95,18 @@ function insertMethods(entityName: string, entityNameFirstLetterToLowerCase: str
 }
 
 
-function insertMethodFindById(entityName: string, entityNameFirstLetterToLowerCase: string, typeVariableID: string) {
-	return `@GetMapping("/{id}")
+function insertMethodFindById(entityName: string, entityNameFirstLetterToLowerCase: string, typeVariableID: string, useResultProc: boolean) {
+	if (useResultProc) {
+		return `@GetMapping("/{id}")
 	public ResponseEntity<ResultadoProc<${entityName}>> findById(@PathVariable("id") ${typeVariableID} ${entityNameFirstLetterToLowerCase}Id) {
 		ResultadoProc<${entityName}> salida = ${entityNameFirstLetterToLowerCase}Service.findById(${entityNameFirstLetterToLowerCase}Id);
 		return new ResponseEntity<ResultadoProc<${entityName}>>(salida, HttpStatus.OK);
+	}`;
+	}
+	return `@GetMapping("/{id}")
+	public ResponseEntity<${entityName}> findById(@PathVariable("id") ${typeVariableID} ${entityNameFirstLetterToLowerCase}Id) throws ErrorProcessingException, EntityNotFoundException {
+		${entityName} salida = ${entityNameFirstLetterToLowerCase}Service.findById(${entityNameFirstLetterToLowerCase}Id);
+		return new ResponseEntity<${entityName}>(salida, HttpStatus.OK);
 	}`;
 }
 

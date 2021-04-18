@@ -30,6 +30,11 @@ export const generateCodeJavaBase = async (uri: Uri) => {
     targetDirectory = uri.fsPath;
   }
 
+  let codeStyle = await window.showQuickPick(['NO usar clase ResultadoProc', 'Usar clase ResultadoProc'], {
+    placeHolder: '',
+  });
+  let useResulProc: boolean = codeStyle == 'Usar clase ResultadoProc';
+
   let entityName = await promptForEntityName();
   if (lodash.isNil(entityName) || entityName.trim() === "") {
     window.showErrorMessage("El nombre de la clase no debe estar vacía");
@@ -66,13 +71,17 @@ export const generateCodeJavaBase = async (uri: Uri) => {
   }
   );
 
-  const useUtilClassOpt = await window.showQuickPick([`Usar clases locales`, `Usar repositorio UFT`], {
-    placeHolder: 'Importar clases de utilidad (ResultadoProc, SearchPagination, etc)',
-  });
-  const useUtilClass = useUtilClassOpt === `Usar clases locales`;
+  let useUtilClass = true;
+  if (useResulProc) {
+    const useUtilClassOpt = await window.showQuickPick([`Usar clases locales`, `Usar repositorio UFT`], {
+      placeHolder: 'Importar clases de utilidad (ResultadoProc, SearchPagination, etc)',
+    });
+    useUtilClass = useUtilClassOpt === `Usar clases locales`;
+  }
+
 
   try {
-    await generateAllCode(entityName, targetDirectory, typeVariableID, metodosChecboxes, useUtilClass);
+    await generateAllCode(entityName, targetDirectory, typeVariableID, metodosChecboxes, useUtilClass, useResulProc);
     window.showInformationMessage(
       `Exito! Código ${entityName} generado correctamente`
     );
@@ -99,7 +108,13 @@ function promptForTypeVariable(): Thenable<string | undefined> {
   return window.showInputBox(entityNamePromptOptions);
 }
 
-async function generateAllCode(entityName: string, targetDirectory: string, typeVariableID: string, methodsSelected: Array<Checkbox>, useUtilClass: boolean) {
+async function generateAllCode(
+  entityName: string,
+  targetDirectory: string,
+  typeVariableID: string,
+  methodsSelected: Array<Checkbox>,
+  useUtilClass: boolean,
+  useResulProc: boolean) {
   if (!existsSync(`${targetDirectory}/entities`)) {
     await createDirectory(`${targetDirectory}/entities`);
   }
@@ -118,6 +133,15 @@ async function generateAllCode(entityName: string, targetDirectory: string, type
   if (!existsSync(`${targetDirectory}/utils`) && useUtilClass) {
     await createDirectory(`${targetDirectory}/utils`);
   }
+  if (!existsSync(`${targetDirectory}/models`) && !useResulProc) {
+    await createDirectory(`${targetDirectory}/models`);
+  }
+  if (!existsSync(`${targetDirectory}/configurations`) && !useResulProc) {
+    await createDirectory(`${targetDirectory}/configurations`);
+  }
+  if (!existsSync(`${targetDirectory}/exceptions`) && !useResulProc) {
+    await createDirectory(`${targetDirectory}/exceptions`);
+  }
 
   const data: ParamMethodJava = new ParamMethodJava({
     entityName: entityName,
@@ -125,6 +149,7 @@ async function generateAllCode(entityName: string, targetDirectory: string, type
     typeVariableID: typeVariableID,
     methodsSelected: methodsSelected,
     useUtilClass: useUtilClass,
+    useResulProc: useResulProc,
   });
   await Promise.all([
     createEntity(data),
@@ -133,7 +158,12 @@ async function generateAllCode(entityName: string, targetDirectory: string, type
     createController(data),
     createRepository(data),
   ]);
-  if (data.useUtilClass) {
+  if (!useResulProc) {
+    await Promise.all([
+      createUtilSearchPaginationIfNotExist(data),
+      createUtilUtilIfNotExist(data),
+    ]);
+  } else if (data.useUtilClass) {
     await Promise.all([
       createUtilResultadoProcIfNotExist(data),
       createUtilSearchPaginationIfNotExist(data),

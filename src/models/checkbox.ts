@@ -1,5 +1,3 @@
-
-
 export default class Checkbox {
     checked: boolean = false;
     methodName: string = '';

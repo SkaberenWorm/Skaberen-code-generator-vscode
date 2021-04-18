@@ -12,6 +12,7 @@ export function getServiceTemplate(
   typeVariableID: string,
   methods: Array<Checkbox>,
   useUtilClass: boolean,
+  useResultProc: boolean,
 ): string {
 
   const entityNameFirstLetterToLowerCase = toLowerCaseFirstLetter(entityName);
@@ -23,10 +24,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-
-import ${useUtilClass ? packageUtil + '.ResultadoProc;' : 'cl.uft.commons.model.ResultadoProc;'}
+${useResultProc ? `\nimport ${useUtilClass ? packageUtil + '.ResultadoProc;' : 'cl.uft.commons.model.ResultadoProc;'}` : ''}
 import ${useUtilClass ? packageUtil + '.Util;' : 'cl.uft.commons.model.Util;'}
 import ${packageEntity}.${entityName};
+${!useResultProc ? `import com.example.demo.exceptions.EntityNotFoundException;\nimport com.example.demo.exceptions.ErrorProcessingException;` : ''}
 import ${packageRepository}.${entityName}Repository;
 import ${packageIService}.I${entityName}Service;
 
@@ -35,21 +36,21 @@ public class ${entityName}Service implements I${entityName}Service {
 
   @Autowired
   ${entityName}Repository ${entityNameFirstLetterToLowerCase}Repository;
-  ${insertMethods(entityName, entityNameFirstLetterToLowerCase, typeVariableID, methods)}
+  ${insertMethods(entityName, entityNameFirstLetterToLowerCase, typeVariableID, methods, useResultProc)}
   }
   
 `;
 }
 
 
-function insertMethods(entityName: string, entityNameFirstLetterToLowerCase: string, typeVariableID: string, methods: Array<Checkbox>) {
+function insertMethods(entityName: string, entityNameFirstLetterToLowerCase: string, typeVariableID: string, methods: Array<Checkbox>, useResultProc: boolean) {
   let code = '';
   methods.forEach(method => {
     if (method.checked) {
       switch (method.method) {
         case METHOD.findById:
           code += '\n\n\t';
-          code += insertMethodFindById(entityName, entityNameFirstLetterToLowerCase, typeVariableID);
+          code += insertMethodFindById(entityName, entityNameFirstLetterToLowerCase, typeVariableID, useResultProc);
           break;
         case METHOD.findAll:
           code += '\n\n\t';
@@ -87,14 +88,15 @@ function insertMethods(entityName: string, entityNameFirstLetterToLowerCase: str
 }
 
 
-function insertMethodFindById(entityName: string, entityNameFirstLetterToLowerCase: string, typeVariableID: string) {
-  return `@Override
+function insertMethodFindById(entityName: string, entityNameFirstLetterToLowerCase: string, typeVariableID: string, useResultProc: boolean) {
+  if (useResultProc) {
+    return `@Override
   public ResultadoProc<${entityName}> findById(final ${typeVariableID} ${entityNameFirstLetterToLowerCase}Id) {
     final ResultadoProc.Builder<${entityName}> salida = new ResultadoProc.Builder<${entityName}>();
     try {
       final ${entityName} ${entityNameFirstLetterToLowerCase} = this.${entityNameFirstLetterToLowerCase}Repository.findById(${entityNameFirstLetterToLowerCase}Id).orElse(null);
       if (${entityNameFirstLetterToLowerCase} == null) {
-        salida.fallo("No se ha encontrado  ${entityNameFirstLetterToLowerCase}");
+        salida.fallo("${entityName} no se encontrado");
       }
       salida.exitoso(${entityNameFirstLetterToLowerCase});
     } catch (final Exception e) {
@@ -103,6 +105,19 @@ function insertMethodFindById(entityName: string, entityNameFirstLetterToLowerCa
     }
     return salida.build();
   }`;
+  }
+  return `@Override
+  public ${entityName} findById(final ${typeVariableID} ${entityNameFirstLetterToLowerCase}Id) throws ErrorProcessingException, EntityNotFoundException {
+    try {
+      final ${entityName} ${entityNameFirstLetterToLowerCase} = this.${entityNameFirstLetterToLowerCase}Repository.findById(${entityNameFirstLetterToLowerCase}Id)
+          .orElseThrow(() -> new EntityNotFoundException("${entityName} no se encontrado"));
+          return ${entityNameFirstLetterToLowerCase};
+    } catch (final Exception e) {
+      Util.printError("findById(" + ${entityNameFirstLetterToLowerCase}Id + ")", e);
+      throw new ErrorProcessingException("Se produjo un error inesperado al intentar obtener los datos");
+    }
+  }`;
+
 }
 
 function insertMethodfindAll(entityName: string, entityNameFirstLetterToLowerCase: string) {
