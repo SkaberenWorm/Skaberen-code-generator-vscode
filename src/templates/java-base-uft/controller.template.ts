@@ -107,10 +107,10 @@ function insertMethodfindAll(entityName: string, entityNameFirstLetterToLowerCas
 
 	if (!useResultProc) {
 		return `@GetMapping("/find-all")
-		public ResponseEntity<List<${entityName}>> findAll() throws ErrorProcessingException {
-			List<${entityName}> salida = ${entityNameFirstLetterToLowerCase}Service.findAll();
-			return new ResponseEntity<List<${entityName}>>(salida, HttpStatus.OK);
-		}`;
+	public ResponseEntity<List<${entityName}>> findAll() throws ErrorProcessingException {
+		List<${entityName}> salida = ${entityNameFirstLetterToLowerCase}Service.findAll();
+		return new ResponseEntity<List<${entityName}>>(salida, HttpStatus.OK);
+	}`;
 	}
 
 	return `@GetMapping("/find-all")
@@ -124,10 +124,10 @@ function insertMethodfindAllActive(entityName: string, entityNameFirstLetterToLo
 
 	if (!useResultProc) {
 		return `@GetMapping("/find-all-active")
-		public ResponseEntity<List<${entityName}>> findAllActive() throws ErrorProcessingException {
-			List<${entityName}> salida = ${entityNameFirstLetterToLowerCase}Service.findAllActive();
-			return new ResponseEntity<List<${entityName}>>(salida, HttpStatus.OK);
-		}`;
+	public ResponseEntity<List<${entityName}>> findAllActive() throws ErrorProcessingException {
+		List<${entityName}> salida = ${entityNameFirstLetterToLowerCase}Service.findAllActive();
+		return new ResponseEntity<List<${entityName}>>(salida, HttpStatus.OK);
+	}`;
 	}
 
 	return `@GetMapping("/find-all-active")
@@ -141,14 +141,14 @@ function insertMethodfindAllPaginatedBySearch(entityName: string, entityNameFirs
 
 	if (!useResultProc) {
 		return `@PostMapping("/page-all-by-search")
-		public ResponseEntity<Page<${entityName}>> findAllPaginatedBySearch(
-				@RequestBody SearchPagination<String> searchPagination) throws ErrorProcessingException {
-			PageRequest pageable = searchPagination.getPageRequest();
-			String search = searchPagination.getSeek();
-			Page<${entityName}> salida = ${entityNameFirstLetterToLowerCase}Service.findAllPaginatedBySearch(search,
-				pageable);
-			return new ResponseEntity<Page<${entityName}>>(salida, HttpStatus.OK);
-		}`;
+	public ResponseEntity<Page<${entityName}>> findAllPaginatedBySearch(
+			@RequestBody SearchPagination<String> searchPagination) throws ErrorProcessingException {
+		PageRequest pageable = searchPagination.getPageRequest();
+		String search = searchPagination.getSeek();
+		Page<${entityName}> salida = ${entityNameFirstLetterToLowerCase}Service.findAllPaginatedBySearch(search,
+			pageable);
+		return new ResponseEntity<Page<${entityName}>>(salida, HttpStatus.OK);
+	}`;
 	}
 
 	return `@PostMapping("/page-all-by-search")
@@ -166,10 +166,10 @@ function insertMethodSave(entityName: string, entityNameFirstLetterToLowerCase: 
 
 	if (!useResultProc) {
 		return `@PostMapping
-		public ResponseEntity<${entityName}> save(@RequestBody ${entityName} ${entityNameFirstLetterToLowerCase}) throws UnsavedEntityException {
-			${entityName} salida = ${entityNameFirstLetterToLowerCase}Service.save(${entityNameFirstLetterToLowerCase});
-			return new ResponseEntity<${entityName}>(salida, HttpStatus.OK);
-		}`;
+	public ResponseEntity<${entityName}> save(@RequestBody ${entityName} ${entityNameFirstLetterToLowerCase}) throws UnsavedEntityException {
+		${entityName} salida = ${entityNameFirstLetterToLowerCase}Service.save(${entityNameFirstLetterToLowerCase});
+		return new ResponseEntity<${entityName}>(salida, HttpStatus.OK);
+	}`;
 	}
 
 	return `@PostMapping
@@ -183,10 +183,10 @@ function insertMethodUpdate(entityName: string, entityNameFirstLetterToLowerCase
 
 	if (!useResultProc) {
 		return `@PutMapping
-		public ResponseEntity<${entityName}> update(@RequestBody ${entityName} ${entityNameFirstLetterToLowerCase}) throws UnsavedEntityException {
-			${entityName} salida = ${entityNameFirstLetterToLowerCase}Service.update(${entityNameFirstLetterToLowerCase});
-			return new ResponseEntity<${entityName}>(salida, HttpStatus.OK);
-		}`;
+	public ResponseEntity<${entityName}> update(@RequestBody ${entityName} ${entityNameFirstLetterToLowerCase}) throws UnsavedEntityException {
+		${entityName} salida = ${entityNameFirstLetterToLowerCase}Service.update(${entityNameFirstLetterToLowerCase});
+		return new ResponseEntity<${entityName}>(salida, HttpStatus.OK);
+	}`;
 	}
 
 	return `@PutMapping
