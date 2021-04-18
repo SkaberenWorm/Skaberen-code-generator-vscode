@@ -7,10 +7,15 @@ import { methods } from '../models/method-actions';
 import ParamMethodJava from '../models/param-method-java';
 import {
   createController,
+  createControllerExceptionHandler,
   createEntity,
+  createEntityNotFoundException,
+  createErrorProcessingException,
   createIService,
+  createModelErrorMessage,
   createRepository,
   createService,
+  createUnsavedEntityException,
   createUtilResultadoProcIfNotExist,
   createUtilSearchPaginationIfNotExist,
   createUtilUtilIfNotExist,
@@ -161,7 +166,12 @@ async function generateAllCode(
   if (!useResulProc) {
     await Promise.all([
       createUtilSearchPaginationIfNotExist(data),
-      createUtilUtilIfNotExist(data),
+      // createUtilUtilIfNotExist(data),
+      createControllerExceptionHandler(data),
+      createModelErrorMessage(data),
+      createUnsavedEntityException(data),
+      createErrorProcessingException(data),
+      createEntityNotFoundException(data),
     ]);
   } else if (data.useUtilClass) {
     await Promise.all([

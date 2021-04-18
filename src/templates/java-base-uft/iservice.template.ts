@@ -23,7 +23,7 @@ import org.springframework.data.domain.PageRequest;
 
 ${useResultProc ? `import ${useUtilClass ? packageUtil + '.ResultadoProc;' : 'cl.uft.commons.model.ResultadoProc;'}` : ''}
 import ${packageEntity}.${entityName};
-${!useResultProc ? `import com.example.demo.exceptions.EntityNotFoundException;\nimport com.example.demo.exceptions.ErrorProcessingException;\n` : ''}
+${!useResultProc ? `import com.example.demo.exceptions.EntityNotFoundException;\nimport com.example.demo.exceptions.ErrorProcessingException;\nimport com.example.demo.exceptions.UnsavedEntityException;\n` : ''}
 public interface I${entityName}Service {
 ${insertMethods(entityName, entityNameFirstLetterToLowerCase, typeVariableID, methods, useResultProc)}
 }
@@ -59,14 +59,6 @@ function insertMethods(entityName: string, entityNameFirstLetterToLowerCase: str
           code += '\n\n\t';
           code += insertMethodUpdate(entityName, entityNameFirstLetterToLowerCase, useResultProc);
           break;
-        case METHOD.changeState:
-          code += '\n\n\t';
-          code += insertMethodChangeState(entityName, entityNameFirstLetterToLowerCase);
-          break;
-        case METHOD.delete:
-          code += '\n\n\t';
-          code += insertMethodDelete(entityName, entityNameFirstLetterToLowerCase);
-          break;
       }
     }
 
@@ -81,7 +73,10 @@ function insertMethodFindById(entityName: string, entityNameFirstLetterToLowerCa
   * @param ${entityNameFirstLetterToLowerCase}Id Identifier  {@link ${entityName}}
   * @return {@link ${entityName}} with the given id
   */
-  ${useResultProc ? `ResultadoProc<${entityName}>` : entityName} findById(${typeVariableID} ${entityNameFirstLetterToLowerCase}Id) throws ErrorProcessingException, EntityNotFoundException;`;
+  ${useResultProc ?
+      `ResultadoProc<${entityName}> findById(${typeVariableID} ${entityNameFirstLetterToLowerCase}Id);` :
+      `${entityName} findById(${typeVariableID} ${entityNameFirstLetterToLowerCase}Id) throws ErrorProcessingException, EntityNotFoundException;`
+    }`;
 }
 
 function insertMethodFindAll(entityName: string, useResultProc: boolean) {
@@ -90,7 +85,10 @@ function insertMethodFindAll(entityName: string, useResultProc: boolean) {
   * 
   * @return all entities {@link ${entityName}}
   */
-  ${useResultProc ? `ResultadoProc<List<${entityName}>>` : `List<${entityName}>`} findAll();`;
+  ${useResultProc ?
+      `ResultadoProc<List<${entityName}>> findAll();` :
+      `List<${entityName}> findAll() throws ErrorProcessingException;`
+    }`;
 }
 
 function insertMethodFindAllActive(entityName: string, useResultProc: boolean) {
@@ -99,7 +97,10 @@ function insertMethodFindAllActive(entityName: string, useResultProc: boolean) {
   * 
   * @return all active entities {@link ${entityName}}
   */
-  ResultadoProc<List<${entityName}>> findAllActive();`;
+  ${useResultProc ?
+      `ResultadoProc<List<${entityName}>> findAllActive();` :
+      `List<${entityName}> findAllActive() throws ErrorProcessingException;`
+    }`;
 }
 
 
@@ -111,7 +112,10 @@ function insertMethodFindAllPaginatedBySearch(entityName: string, useResultProc:
   * @param search   Text to search within the attributes of the {@link ${entityName}} entity
   * @return {@link Page} of the {@link ${entityName}}
   */
-  ${useResultProc ? `ResultadoProc<Page<${entityName}>>` : `Page<${entityName}>`} findAllPaginatedBySearch(String search, PageRequest pageable);`;
+  ${useResultProc ?
+      `ResultadoProc<Page<${entityName}>> findAllPaginatedBySearch(String search, PageRequest pageable);` :
+      `Page<${entityName}> findAllPaginatedBySearch(String search, PageRequest pageable) throws ErrorProcessingException;`
+    }`;
 }
 
 function insertMethodSave(entityName: string, entityNameFirstLetterToLowerCase: string, useResultProc: boolean) {
@@ -121,7 +125,10 @@ function insertMethodSave(entityName: string, entityNameFirstLetterToLowerCase: 
 	 * @param ${entityNameFirstLetterToLowerCase} {@link ${entityName}}
 	 * @return the saved entity
 	 */
-  ${useResultProc ? `ResultadoProc<${entityName}>` : `${entityName}`} save(${entityName} ${entityNameFirstLetterToLowerCase});`;
+  ${useResultProc ?
+      `ResultadoProc<${entityName}> save(${entityName} ${entityNameFirstLetterToLowerCase});` :
+      `${entityName} save(${entityName} ${entityNameFirstLetterToLowerCase}) throws UnsavedEntityException;`
+    }`;
 }
 
 function insertMethodUpdate(entityName: string, entityNameFirstLetterToLowerCase: string, useResultProc: boolean) {
@@ -131,16 +138,12 @@ function insertMethodUpdate(entityName: string, entityNameFirstLetterToLowerCase
   * @param ${entityNameFirstLetterToLowerCase} {@link ${entityName}}
   * @return the updated entity
   */
-  ${useResultProc ? `ResultadoProc<${entityName}>` : `${entityName}`} update(${entityName} ${entityNameFirstLetterToLowerCase}Param);`;
+  ${useResultProc ?
+      `ResultadoProc<${entityName}> update(${entityName} ${entityNameFirstLetterToLowerCase});` :
+      `${entityName} update(${entityName} ${entityNameFirstLetterToLowerCase}) throws UnsavedEntityException;`
+    }`;
 }
 
-function insertMethodChangeState(entityName: string, entityNameFirstLetterToLowerCase: string) {
-  return ``;
-}
-
-function insertMethodDelete(entityName: string, entityNameFirstLetterToLowerCase: string) {
-  return ``;
-}
 
 
 

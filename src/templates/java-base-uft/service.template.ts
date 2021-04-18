@@ -25,9 +25,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 ${useResultProc ? `\nimport ${useUtilClass ? packageUtil + '.ResultadoProc;' : 'cl.uft.commons.model.ResultadoProc;'}` : ''}
-import ${useUtilClass ? packageUtil + '.Util;' : 'cl.uft.commons.model.Util;'}
+${useResultProc ? `import ${useUtilClass ? packageUtil + '.Util;' : 'cl.uft.commons.model.Util;'}` : ''}
 import ${packageEntity}.${entityName};
-${!useResultProc ? `import com.example.demo.exceptions.EntityNotFoundException;\nimport com.example.demo.exceptions.ErrorProcessingException;` : ''}
+${!useResultProc ? `import com.example.demo.exceptions.EntityNotFoundException;\nimport com.example.demo.exceptions.ErrorProcessingException;\nimport com.example.demo.exceptions.UnsavedEntityException;` : ''}
 import ${packageRepository}.${entityName}Repository;
 import ${packageIService}.I${entityName}Service;
 
@@ -54,32 +54,25 @@ function insertMethods(entityName: string, entityNameFirstLetterToLowerCase: str
           break;
         case METHOD.findAll:
           code += '\n\n\t';
-          code += insertMethodfindAll(entityName, entityNameFirstLetterToLowerCase);
+          code += insertMethodfindAll(entityName, entityNameFirstLetterToLowerCase, useResultProc);
           break;
         case METHOD.findAllActive:
           code += '\n\n\t';
-          code += insertMethodfindAllActive(entityName, entityNameFirstLetterToLowerCase);
+          code += insertMethodfindAllActive(entityName, entityNameFirstLetterToLowerCase, useResultProc);
           break;
         case METHOD.findAllPaginatedBySearch:
           code += '\n\n\t';
-          code += insertMethodfindAllPaginatedBySearch(entityName, entityNameFirstLetterToLowerCase);
+          code += insertMethodfindAllPaginatedBySearch(entityName, entityNameFirstLetterToLowerCase, useResultProc);
           break;
         case METHOD.save:
           code += '\n\n\t';
-          code += insertMethodSave(entityName, entityNameFirstLetterToLowerCase);
+          code += insertMethodSave(entityName, entityNameFirstLetterToLowerCase, useResultProc);
           break;
         case METHOD.update:
           code += '\n\n\t';
-          code += insertMethodUpdate(entityName, entityNameFirstLetterToLowerCase);
+          code += insertMethodUpdate(entityName, entityNameFirstLetterToLowerCase, useResultProc);
           break;
-        case METHOD.changeState:
-          code += '\n\n\t';
-          code += insertMethodChangeState(entityName, entityNameFirstLetterToLowerCase);
-          break;
-        case METHOD.delete:
-          code += '\n\n\t';
-          code += insertMethodDelete(entityName, entityNameFirstLetterToLowerCase);
-          break;
+
       }
     }
 
@@ -106,21 +99,33 @@ function insertMethodFindById(entityName: string, entityNameFirstLetterToLowerCa
     return salida.build();
   }`;
   }
+
   return `@Override
   public ${entityName} findById(final ${typeVariableID} ${entityNameFirstLetterToLowerCase}Id) throws ErrorProcessingException, EntityNotFoundException {
     try {
-      final ${entityName} ${entityNameFirstLetterToLowerCase} = this.${entityNameFirstLetterToLowerCase}Repository.findById(${entityNameFirstLetterToLowerCase}Id)
-          .orElseThrow(() -> new EntityNotFoundException("${entityName} no se encontrado"));
-          return ${entityNameFirstLetterToLowerCase};
+      return this.${entityNameFirstLetterToLowerCase}Repository.findById(${entityNameFirstLetterToLowerCase}Id).orElseThrow(() -> new EntityNotFoundException());
+    } catch (final EntityNotFoundException e) {
+      throw new EntityNotFoundException();
     } catch (final Exception e) {
-      Util.printError("findById(" + ${entityNameFirstLetterToLowerCase}Id + ")", e);
-      throw new ErrorProcessingException("Se produjo un error inesperado al intentar obtener los datos");
+      throw new ErrorProcessingException();
     }
   }`;
 
 }
 
-function insertMethodfindAll(entityName: string, entityNameFirstLetterToLowerCase: string) {
+function insertMethodfindAll(entityName: string, entityNameFirstLetterToLowerCase: string, useResultProc: boolean) {
+
+  if (!useResultProc) {
+    return `@Override
+  public List<${entityName}> findAll() throws ErrorProcessingException {
+    try {
+      return this.usuarioRepository.findAll();
+    } catch (final Exception e) {
+      throw new ErrorProcessingException();
+    }
+  }`;
+  }
+
   return `@Override
   public ResultadoProc<List<${entityName}>> findAll() {
     final ResultadoProc.Builder<List<${entityName}>> salida = new ResultadoProc.Builder<List<${entityName}>>();
@@ -134,7 +139,19 @@ function insertMethodfindAll(entityName: string, entityNameFirstLetterToLowerCas
   }`;
 }
 
-function insertMethodfindAllActive(entityName: string, entityNameFirstLetterToLowerCase: string) {
+function insertMethodfindAllActive(entityName: string, entityNameFirstLetterToLowerCase: string, useResultProc: boolean) {
+
+  if (!useResultProc) {
+    return `@Override
+  public List<${entityName}> findAllActive() throws ErrorProcessingException {
+    try {
+      return this.${entityNameFirstLetterToLowerCase}Repository.findAllActive();
+    } catch (final Exception e) {
+      throw new ErrorProcessingException();
+    }
+  }`;
+  }
+
   return `@Override
   public ResultadoProc<List<${entityName}>> findAllActive() {
     final ResultadoProc.Builder<List<${entityName}>> salida = new ResultadoProc.Builder<List<${entityName}>>();
@@ -148,7 +165,20 @@ function insertMethodfindAllActive(entityName: string, entityNameFirstLetterToLo
   }`;
 }
 
-function insertMethodfindAllPaginatedBySearch(entityName: string, entityNameFirstLetterToLowerCase: string) {
+function insertMethodfindAllPaginatedBySearch(entityName: string, entityNameFirstLetterToLowerCase: string, useResultProc: boolean) {
+
+  if (!useResultProc) {
+    return `@Override
+    public Page<${entityName}> findAllPaginatedBySearch(final String search, final PageRequest pageable)
+        throws ErrorProcessingException {
+      try {
+        return this.${entityNameFirstLetterToLowerCase}Repository.findAllBySearch(search, pageable);
+      } catch (final Exception e) {
+        throw new ErrorProcessingException();
+      }
+    }`;
+  }
+
   return `@Override
   public ResultadoProc<Page<${entityName}>> findAllPaginatedBySearch(final String search, final PageRequest pageable) {
     final ResultadoProc.Builder<Page<${entityName}>> salida = new ResultadoProc.Builder<Page<${entityName}>>();
@@ -162,7 +192,19 @@ function insertMethodfindAllPaginatedBySearch(entityName: string, entityNameFirs
   }`;
 }
 
-function insertMethodSave(entityName: string, entityNameFirstLetterToLowerCase: string) {
+function insertMethodSave(entityName: string, entityNameFirstLetterToLowerCase: string, useResultProc: boolean) {
+
+  if (!useResultProc) {
+    return `@Override
+  public ${entityName} save(final ${entityName} ${entityNameFirstLetterToLowerCase}) throws UnsavedEntityException {
+    try {
+      return this.${entityNameFirstLetterToLowerCase}Repository.save(${entityNameFirstLetterToLowerCase});
+    } catch (final Exception e) {
+      throw new UnsavedEntityException();
+    }
+  }`;
+  }
+
   return `@Override
   public ResultadoProc<${entityName}> save(final ${entityName} ${entityNameFirstLetterToLowerCase}) {
     final ResultadoProc.Builder<${entityName}> salida = new ResultadoProc.Builder<${entityName}>();
@@ -177,7 +219,19 @@ function insertMethodSave(entityName: string, entityNameFirstLetterToLowerCase: 
   }`;
 }
 
-function insertMethodUpdate(entityName: string, entityNameFirstLetterToLowerCase: string) {
+function insertMethodUpdate(entityName: string, entityNameFirstLetterToLowerCase: string, useResultProc: boolean) {
+
+  if (!useResultProc) {
+    return `@Override
+  public ${entityName} update(final ${entityName} ${entityNameFirstLetterToLowerCase}) throws UnsavedEntityException {
+    try {
+      return this.${entityNameFirstLetterToLowerCase}Repository.save(${entityNameFirstLetterToLowerCase});
+    } catch (final Exception e) {
+      throw new UnsavedEntityException();
+    }
+  }`;
+  }
+
   return `@Override
   public ResultadoProc<${entityName}> update(final ${entityName} ${entityNameFirstLetterToLowerCase}) {
     final ResultadoProc.Builder<${entityName}> salida = new ResultadoProc.Builder<${entityName}>();
@@ -192,13 +246,6 @@ function insertMethodUpdate(entityName: string, entityNameFirstLetterToLowerCase
   }`;
 }
 
-function insertMethodChangeState(entityName: string, entityNameFirstLetterToLowerCase: string) {
-  return ``;
-}
-
-function insertMethodDelete(entityName: string, entityNameFirstLetterToLowerCase: string) {
-  return ``;
-}
 
 
 

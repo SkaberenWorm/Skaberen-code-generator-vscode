@@ -1,9 +1,16 @@
 import { existsSync, writeFile } from 'fs';
 
 import ParamMethodJava from '../models/param-method-java';
+import { getControllerExceptionHandlerTemplate } from '../templates/java-base-uft/controller-exception-handler';
 import { getControllerTemplate } from '../templates/java-base-uft/controller.template';
 import { getEntityTemplate } from '../templates/java-base-uft/entity.template';
+import {
+    getEntityNotFoundExceptionTemplate,
+    getErrorProcessingExceptionTemplate,
+    getUnsavedEntityExceptionTemplate,
+} from '../templates/java-base-uft/exceptions';
 import { getIServiceTemplate } from '../templates/java-base-uft/iservice.template';
+import { getModelErrorMessageTemplate } from '../templates/java-base-uft/model-error-message';
 import { getRepositoryTemplate } from '../templates/java-base-uft/repository.template';
 import { getResultadoProcTemplate } from '../templates/java-base-uft/resultado-proc.template';
 import { getSearchPaginationTemplate } from '../templates/java-base-uft/search-pagination.template';
@@ -243,32 +250,20 @@ export function createUtilUtilIfNotExist(param: ParamMethodJava): Promise<void> 
     }
 }
 
-export function createExceptions(param: ParamMethodJava): Promise<void> | undefined {
+export function createModelErrorMessage(param: ParamMethodJava): Promise<void> | undefined {
 
-    const entityName = param.entityName;
     const targetDirectory = param.targetDirectory;
 
-    const targetPath = `${targetDirectory}/controllers/${entityName}RestController.java`;
-    const packageController = `${targetDirectory.substring(targetDirectory.indexOf("src/main/java/"), targetDirectory.length)}.controllers`.replace(new RegExp('/', 'g'), '.').replace('src.main.java.', '');
-    const packageIService = `${targetDirectory.substring(targetDirectory.indexOf("src/main/java/"), targetDirectory.length)}.services`.replace(new RegExp('/', 'g'), '.').replace('src.main.java.', '');
-    const packageEntity = `${targetDirectory.substring(targetDirectory.indexOf("src/main/java/"), targetDirectory.length)}.entities`.replace(new RegExp('/', 'g'), '.').replace('src.main.java.', '');
-    const packageUtil = `${targetDirectory.substring(targetDirectory.indexOf("src/main/java/"), targetDirectory.length)}.utils`.replace(new RegExp('/', 'g'), '.').replace('src.main.java.', '');
+    const targetPath = `${targetDirectory}/models/ErrorMessage.java`;
+    const packageModel = `${targetDirectory.substring(targetDirectory.indexOf("src/main/java/"), targetDirectory.length)}.models`.replace(new RegExp('/', 'g'), '.').replace('src.main.java.', '');
     if (existsSync(targetPath)) {
-        throw Error(`${entityName}RestController.java ya existe`);
+        throw Error(`ErrorMessage.java ya existe`);
     }
     return new Promise(async (resolve, reject) => {
         writeFile(
             targetPath,
-            getControllerTemplate(
-                entityName,
-                packageController,
-                packageEntity,
-                packageUtil,
-                packageIService,
-                param.typeVariableID,
-                param.methodsSelected,
-                param.useUtilClass,
-                param.useResulProc,
+            getModelErrorMessageTemplate(
+                packageModel,
             ),
             "utf8",
             (error) => {
@@ -278,4 +273,110 @@ export function createExceptions(param: ParamMethodJava): Promise<void> | undefi
         );
     });
 }
+
+
+export function createControllerExceptionHandler(param: ParamMethodJava): Promise<void> | undefined {
+
+    const targetDirectory = param.targetDirectory;
+
+    const targetPath = `${targetDirectory}/configurations/ControllerExceptionHandler.java`;
+    const packageControllerException = `${targetDirectory.substring(targetDirectory.indexOf("src/main/java/"), targetDirectory.length)}.configurations`.replace(new RegExp('/', 'g'), '.').replace('src.main.java.', '');
+    const packageException = `${targetDirectory.substring(targetDirectory.indexOf("src/main/java/"), targetDirectory.length)}.exceptions`.replace(new RegExp('/', 'g'), '.').replace('src.main.java.', '');
+    const packageModel = `${targetDirectory.substring(targetDirectory.indexOf("src/main/java/"), targetDirectory.length)}.models`.replace(new RegExp('/', 'g'), '.').replace('src.main.java.', '');
+    if (existsSync(targetPath)) {
+        throw Error(`ControllerExceptionHandler.java ya existe`);
+    }
+    return new Promise(async (resolve, reject) => {
+        writeFile(
+            targetPath,
+            getControllerExceptionHandlerTemplate(
+                packageControllerException,
+                packageException,
+                packageModel,
+            ),
+            "utf8",
+            (error) => {
+                if (error) { reject(error); return; }
+                resolve();
+            }
+        );
+    });
+}
+
+export function createEntityNotFoundException(param: ParamMethodJava): Promise<void> | undefined {
+
+    const targetDirectory = param.targetDirectory;
+
+    const targetPathEntityNotFoundException = `${targetDirectory}/exceptions/EntityNotFoundException.java`;
+    const packageException = `${targetDirectory.substring(targetDirectory.indexOf("src/main/java/"), targetDirectory.length)}.exceptions`.replace(new RegExp('/', 'g'), '.').replace('src.main.java.', '');
+
+    if (existsSync(targetPathEntityNotFoundException)) {
+        throw Error(`EntityNotFoundException.java ya existe`);
+    }
+
+    return new Promise(async (resolve, reject) => {
+        writeFile(
+            targetPathEntityNotFoundException,
+            getEntityNotFoundExceptionTemplate(
+                packageException,
+            ),
+            "utf8",
+            (error) => {
+                if (error) { reject(error); return; }
+                resolve();
+            }
+        );
+    });
+}
+
+export function createErrorProcessingException(param: ParamMethodJava): Promise<void> | undefined {
+
+    const targetDirectory = param.targetDirectory;
+
+    const targetPathErrorProcessingException = `${targetDirectory}/exceptions/ErrorProcessingException.java`;
+    const packageException = `${targetDirectory.substring(targetDirectory.indexOf("src/main/java/"), targetDirectory.length)}.exceptions`.replace(new RegExp('/', 'g'), '.').replace('src.main.java.', '');
+
+    if (existsSync(targetPathErrorProcessingException)) {
+        throw Error(`ErrorProcessingException.java ya existe`);
+    }
+    return new Promise(async (resolve, reject) => {
+        writeFile(
+            targetPathErrorProcessingException,
+            getErrorProcessingExceptionTemplate(
+                packageException,
+            ),
+            "utf8",
+            (error) => {
+                if (error) { reject(error); return; }
+                resolve();
+            }
+        );
+    });
+}
+
+export function createUnsavedEntityException(param: ParamMethodJava): Promise<void> | undefined {
+
+    const targetDirectory = param.targetDirectory;
+
+    const targetPathUnsavedEntityException = `${targetDirectory}/exceptions/UnsavedEntityException.java`;
+    const packageException = `${targetDirectory.substring(targetDirectory.indexOf("src/main/java/"), targetDirectory.length)}.exceptions`.replace(new RegExp('/', 'g'), '.').replace('src.main.java.', '');
+
+    if (existsSync(targetPathUnsavedEntityException)) {
+        throw Error(`UnsavedEntityException.java ya existe`);
+    }
+    return new Promise(async (resolve, reject) => {
+        writeFile(
+            targetPathUnsavedEntityException,
+            getUnsavedEntityExceptionTemplate(
+                packageException,
+            ),
+            "utf8",
+            (error) => {
+                if (error) { reject(error); return; }
+                resolve();
+            }
+        );
+    });
+}
+
 
