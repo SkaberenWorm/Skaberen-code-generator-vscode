@@ -118,7 +118,7 @@ The response will look like this
 }
 ```
 ```json
-// Status: 404 Not found
+// Status: 404 Not found but return status 200 OK
 {
     "error": "true",
     "mensaje": "Usuario no encontrado",
