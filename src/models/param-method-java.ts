@@ -8,12 +8,12 @@ export default class ParamMethodJava {
     useUtilClass: boolean = true;
     useResulProc: boolean = true;
     constructor(fields?: {
-        entityName: string;
+        entityName?: string;
         targetDirectory: string;
-        typeVariableID: string;
-        methodsSelected: Array<Checkbox>;
-        useUtilClass: boolean;
-        useResulProc: boolean;
+        typeVariableID?: string;
+        methodsSelected?: Array<Checkbox>;
+        useUtilClass?: boolean;
+        useResulProc?: boolean;
     }) {
         if (fields) { Object.assign(this, fields); }
     }

@@ -2,27 +2,54 @@
 
 [Skaberen code generator](https://marketplace.visualstudio.com/items?itemName=Skaberencodetools.skaberen-code-generator) is an extension of Visual Studio Code that allows us to **generate a base code with a graphical user interface.**
 
-> Inspired by [Angular files](https://github.com/ivalexa/vscode-angular2-files) 
+> Inspired by [Angular files](https://github.com/ivalexa/vscode-angular2-files)
+
 ## Why this extension?
 
 This extension will save you time:
 
 - **Spring boot**: Generates a complete REST API, creating entities, services, repositories and controllers.
 - **NgRx**: Generates actions, effects and reducers simply by indicating the name of the model.
+- **Spring Security (Beta)**: Generates an initial code to authenticate with JWT token.
 
 ## Requirements
+
 - [Lombok Annotations Support for VS Code](https://marketplace.visualstudio.com/items?itemName=GabrielBB.vscode-lombok)
 - [Spring Boot Extension Pack](https://marketplace.visualstudio.com/items?itemName=Pivotal.vscode-boot-dev-pack)
 
+## Result
+
+[DEMO 1]
+<https://github.com/SkaberenWorm/demo1-skaberen-code-generator> (Use ResultadoProc class)
+
+[DEMO 2] <https://github.com/SkaberenWorm/demo2-skaberen-code-generator> - recommended
+
+### Result - Use ResultadoProc class (DEMO 1)
+
+![Dec-17-2020 23-34-00](https://user-images.githubusercontent.com/13028053/102567497-62c66600-40c0-11eb-8d99-558c239cdf3b.gif)
+
 ## Getting started
+
 ### API REST with Spring boot
+
 Right-click on the **main package** in the directory browser, then select "Skaberen Java: Generate base code"
 
 **NOTE: The path of the selected directory will be taken as the main package**
 
-
-
 ![Dec-17-2020 23-17-43](https://user-images.githubusercontent.com/13028053/102566384-33165e80-40be-11eb-8228-fb5764b273b2.gif)
+
+### How to enable the option to use the ResultadoProc class?
+
+You must add this line in your vscode configuration file (settings.json)
+
+```json
+{
+"skaberen.useResuldadoProc": true,
+ ...
+}
+```
+
+More information: <https://code.visualstudio.com/docs/getstarted/settings#_settingsjson>
 
 ### What's this?
 
@@ -31,6 +58,7 @@ Right-click on the **main package** in the directory browser, then select "Skabe
 Here you can select how you want your code to be written.
 
 If you select "NO usar clase ResultadoProc", Your code will look like this.
+
 ```java
 // Controller
 @GetMapping("/{id}")
@@ -40,6 +68,7 @@ public ResponseEntity<Usuario> findById(@PathVariable("id") int usuarioId)
     return new ResponseEntity<Usuario>(salida, HttpStatus.OK);
 }
 ```
+
 ```java
 // Service
 @Override
@@ -53,7 +82,9 @@ public ResponseEntity<Usuario> findById(@PathVariable("id") int usuarioId)
     }
   }
 ```
+
 The response will look like this
+
 ```json
 // Status: 200 OK
 {
@@ -63,6 +94,7 @@ The response will look like this
     "email": "ismael.c.26a@gmail.com"
 }
 ```
+
 ```json
 // Status: 404 Not found
 {
@@ -74,7 +106,6 @@ The response will look like this
 }
 ```
 
-
 but if you select "Usar clase ResultadoProc", Your code will look like this.
 
 ```java
@@ -85,6 +116,7 @@ public ResponseEntity<ResultadoProc<Usuario>> findById(@PathVariable("id") int u
     return new ResponseEntity<ResultadoProc<Usuario>>(salida, HttpStatus.OK);
 }
 ```
+
 ```java
 // Service
 @Override
@@ -103,7 +135,9 @@ public ResponseEntity<ResultadoProc<Usuario>> findById(@PathVariable("id") int u
     return salida.build();
   }
 ```
+
 The response will look like this
+
 ```json
 // Status: 200 OK
 {
@@ -117,20 +151,15 @@ The response will look like this
     }
 }
 ```
+
 ```json
-// Status: 404 Not found
+// Status: 200 OK 
+// "error": "true" -> Error true
 {
     "error": "true",
     "mensaje": "Usuario no encontrado",
     "resultado": null
 }
 ```
-
-
-
----
-## Result - Use ResultadoProc class
-
-![Dec-17-2020 23-34-00](https://user-images.githubusercontent.com/13028053/102567497-62c66600-40c0-11eb-8d99-558c239cdf3b.gif)
 
 ---

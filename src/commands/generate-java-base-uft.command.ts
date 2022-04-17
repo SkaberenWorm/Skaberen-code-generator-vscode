@@ -1,6 +1,6 @@
 import { existsSync, lstatSync } from 'fs';
 import * as lodash from 'lodash';
-import { InputBoxOptions, QuickPickItem, Uri, window } from 'vscode';
+import { InputBoxOptions, QuickPickItem, Uri, window, workspace } from 'vscode';
 
 import Checkbox from '../models/checkbox';
 import { methods } from '../models/method-actions';
@@ -35,10 +35,22 @@ export const generateCodeJavaBase = async (uri: Uri) => {
     targetDirectory = uri.fsPath;
   }
 
-  let codeStyle = await window.showQuickPick(['NO usar clase ResultadoProc', 'Usar clase ResultadoProc'], {
-    placeHolder: '',
-  });
-  let useResulProc: boolean = codeStyle == 'Usar clase ResultadoProc';
+
+  // Agregar está linea en el settings.json para activar la opción de mostrar si desea o no usar la clase ResultadoProc
+  // "skaberen.useResuldadoProc": false,
+  const isActiveOptionResultadoProd: boolean | undefined = await workspace.getConfiguration("skaberen").useResuldadoProc;
+  isActiveOptionResultadoProd === undefined ? false : isActiveOptionResultadoProd;
+
+  let useResulProc: boolean = false;
+
+  if (isActiveOptionResultadoProd) {
+    let codeStyle = await window.showQuickPick(['NO usar clase ResultadoProc', 'Usar clase ResultadoProc'], {
+      placeHolder: '',
+    });
+    useResulProc = codeStyle === 'Usar clase ResultadoProc';
+  }
+
+
 
   let entityName = await promptForEntityName();
   if (lodash.isNil(entityName) || entityName.trim() === "") {

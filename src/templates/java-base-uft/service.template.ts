@@ -32,11 +32,14 @@ ${!useResultProc ? `import ${packageExceptions}.EntityNotFoundException;\nimport
 import ${packageRepository}.${entityName}Repository;
 import ${packageIService}.I${entityName}Service;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@Slf4j
 public class ${entityName}Service implements I${entityName}Service {
 
   @Autowired
-  ${entityName}Repository ${entityNameFirstLetterToLowerCase}Repository;
+  private ${entityName}Repository ${entityNameFirstLetterToLowerCase}Repository;
   ${insertMethods(entityName, entityNameFirstLetterToLowerCase, typeVariableID, methods, useResultProc)}
   }
   
@@ -104,11 +107,13 @@ function insertMethodFindById(entityName: string, entityNameFirstLetterToLowerCa
   return `@Override
   public ${entityName} findById(final ${typeVariableID} ${entityNameFirstLetterToLowerCase}Id) throws ErrorProcessingException, EntityNotFoundException {
     try {
+      // TODO: Add message EntityNotFoundException
       return this.${entityNameFirstLetterToLowerCase}Repository.findById(${entityNameFirstLetterToLowerCase}Id).orElseThrow(() -> new EntityNotFoundException());
     } catch (final EntityNotFoundException e) {
-      throw new EntityNotFoundException();
+      throw e;
     } catch (final Exception e) {
-      throw new ErrorProcessingException();
+      log.error("${entityName} findById(\\"{}\\"): {}", ${entityNameFirstLetterToLowerCase}Id, e.getMessage());
+      throw new ErrorProcessingException(e.getMessage());
     }
   }`;
 
@@ -122,7 +127,8 @@ function insertMethodfindAll(entityName: string, entityNameFirstLetterToLowerCas
     try {
       return this.usuarioRepository.findAll();
     } catch (final Exception e) {
-      throw new ErrorProcessingException();
+      log.error("${entityName} findAll(): {}", e.getMessage());
+      throw new ErrorProcessingException(e.getMessage());
     }
   }`;
   }
@@ -148,7 +154,8 @@ function insertMethodfindAllActive(entityName: string, entityNameFirstLetterToLo
     try {
       return this.${entityNameFirstLetterToLowerCase}Repository.findAllActive();
     } catch (final Exception e) {
-      throw new ErrorProcessingException();
+      log.error("${entityName} findAllActive(): {}", e.getMessage());
+      throw new ErrorProcessingException(e.getMessage());
     }
   }`;
   }
@@ -175,7 +182,8 @@ function insertMethodfindAllPaginatedBySearch(entityName: string, entityNameFirs
       try {
         return this.${entityNameFirstLetterToLowerCase}Repository.findAllBySearch(search, pageable);
       } catch (final Exception e) {
-        throw new ErrorProcessingException();
+        log.error("${entityName} findAllPaginatedBySearch(\\"{}\\"): {}", search, e.getMessage());
+        throw new ErrorProcessingException(e.getMessage());
       }
     }`;
   }
@@ -201,7 +209,8 @@ function insertMethodSave(entityName: string, entityNameFirstLetterToLowerCase: 
     try {
       return this.${entityNameFirstLetterToLowerCase}Repository.save(${entityNameFirstLetterToLowerCase});
     } catch (final Exception e) {
-      throw new UnsavedEntityException();
+      log.error("${entityName} save(\\"{}\\"): {}", ${entityNameFirstLetterToLowerCase}.toString(), e.getMessage());
+      throw new UnsavedEntityException(e.getMessage());
     }
   }`;
   }
@@ -228,7 +237,8 @@ function insertMethodUpdate(entityName: string, entityNameFirstLetterToLowerCase
     try {
       return this.${entityNameFirstLetterToLowerCase}Repository.save(${entityNameFirstLetterToLowerCase});
     } catch (final Exception e) {
-      throw new UnsavedEntityException();
+      log.error("${entityName} update(\\"{}\\"): {}", ${entityNameFirstLetterToLowerCase}.toString(), e.getMessage());
+      throw new UnsavedEntityException(e.getMessage());
     }
   }`;
   }

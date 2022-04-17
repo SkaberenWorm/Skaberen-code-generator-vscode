@@ -28,13 +28,13 @@ public class SearchPagination<T> implements Serializable {
     private String direction;
 
     /**
-     * @param filtro
+     * @param filter
      * @param page
      * @param records
      */
-    public SearchPagination(T filtro, int page, int records) {
+    public SearchPagination(T filter, int page, int records) {
         super();
-        this.seek = filtro;
+        this.seek = filter;
         this.page = page;
         this.records = records;
     }

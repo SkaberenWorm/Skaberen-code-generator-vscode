@@ -2,7 +2,7 @@
 	"name": "skaberen-code-generator",
 	"displayName": "Skaberen code generator",
 	"description": "Generate base code for an API REST ",
-	"version": "1.0.4",
+	"version": "1.0.7",
 	"engines": {
 		"vscode": "^1.47.0"
 	},
@@ -27,17 +27,26 @@
 		"commands": [
 			{
 				"command": "spring-boot-base-code-generator.generateCode",
-				"title": "Skaberen Java: Generate base code"
+				"title": "Spring Boot: Generate base code"
+			},
+			{
+				"command": "spring-boot-base-code-generator.generateCodeSpringSecurity",
+				"title": "Spring Boot Security: Generate base code "
 			},
 			{
 				"command": "spring-boot-base-code-generator.generateCodeNgStore",
-				"title": "Skaberen Redux: Generate store code"
+				"title": "NgRx: Generate store code"
 			}
 		],
 		"menus": {
 			"explorer/context": [
 				{
 					"command": "spring-boot-base-code-generator.generateCode",
+					"group": "SkaberenCodeTools",
+					"when": "explorerResourceIsFolder"
+				},
+				{
+					"command": "spring-boot-base-code-generator.generateCodeSpringSecurity",
 					"group": "SkaberenCodeTools",
 					"when": "explorerResourceIsFolder"
 				},

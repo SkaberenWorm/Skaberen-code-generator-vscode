@@ -72,7 +72,7 @@ function insertMethodFindById(entityName: string, entityNameFirstLetterToLowerCa
   * Retrieves an entity {@link ${entityName}} by its identifier
   * 
   * @param ${entityNameFirstLetterToLowerCase}Id Identifier  {@link ${entityName}}
-  * @return {@link ${entityName}} with the given id
+  * @return {@link ${entityName}} with the given id ${!useResultProc ? '\n\t* @throws ErrorProcessingException\n\t* @throws EntityNotFoundException' : ''}
   */
   ${useResultProc ?
       `ResultadoProc<${entityName}> findById(${typeVariableID} ${entityNameFirstLetterToLowerCase}Id);` :
@@ -84,7 +84,7 @@ function insertMethodFindAll(entityName: string, useResultProc: boolean) {
   return `/**
   * Returns all instances of the type {@link ${entityName}} 
   * 
-  * @return all entities {@link ${entityName}}
+  * @return all entities {@link ${entityName}} ${!useResultProc ? '\n\t* @throws ErrorProcessingException' : ''}
   */
   ${useResultProc ?
       `ResultadoProc<List<${entityName}>> findAll();` :
@@ -96,7 +96,7 @@ function insertMethodFindAllActive(entityName: string, useResultProc: boolean) {
   return `/**
   * Returns all active instances of the type {@link ${entityName}} 
   * 
-  * @return all active entities {@link ${entityName}}
+  * @return all active entities {@link ${entityName}}${!useResultProc ? '\n\t* @throws ErrorProcessingException' : ''}
   */
   ${useResultProc ?
       `ResultadoProc<List<${entityName}>> findAllActive();` :
@@ -111,7 +111,7 @@ function insertMethodFindAllPaginatedBySearch(entityName: string, useResultProc:
   * 
   * @param pageable {@link PageRequest}
   * @param search   Text to search within the attributes of the {@link ${entityName}} entity
-  * @return {@link Page} of the {@link ${entityName}}
+  * @return {@link Page} of the {@link ${entityName}} ${!useResultProc ? '\n\t* @throws ErrorProcessingException' : ''}
   */
   ${useResultProc ?
       `ResultadoProc<Page<${entityName}>> findAllPaginatedBySearch(String search, PageRequest pageable);` :
@@ -124,7 +124,7 @@ function insertMethodSave(entityName: string, entityNameFirstLetterToLowerCase: 
 	 * Saves a given entity {@link ${entityName}}
 	 * 
 	 * @param ${entityNameFirstLetterToLowerCase} {@link ${entityName}}
-	 * @return the saved entity
+	 * @return the saved entity ${!useResultProc ? '\n\t* @throws UnsavedEntityException' : ''}
 	 */
   ${useResultProc ?
       `ResultadoProc<${entityName}> save(${entityName} ${entityNameFirstLetterToLowerCase});` :
@@ -137,7 +137,7 @@ function insertMethodUpdate(entityName: string, entityNameFirstLetterToLowerCase
   * Updates a given entity {@link ${entityName}}
   * 
   * @param ${entityNameFirstLetterToLowerCase} {@link ${entityName}}
-  * @return the updated entity
+  * @return the updated entity ${!useResultProc ? '\n\t* @throws UnsavedEntityException' : ''}
   */
   ${useResultProc ?
       `ResultadoProc<${entityName}> update(${entityName} ${entityNameFirstLetterToLowerCase});` :
