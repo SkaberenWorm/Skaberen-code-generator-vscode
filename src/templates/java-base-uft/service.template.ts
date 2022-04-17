@@ -4,6 +4,7 @@ import { toLowerCaseFirstLetter } from '../../utils/utils';
 
 export function getServiceTemplate(
   entityName: string,
+  packageExceptions: string,
   packageService: string,
   packageIService: string,
   packageEntity: string,
@@ -27,7 +28,7 @@ import org.springframework.stereotype.Service;
 ${useResultProc ? `\nimport ${useUtilClass ? packageUtil + '.ResultadoProc;' : 'cl.uft.commons.model.ResultadoProc;'}` : ''}
 ${useResultProc ? `import ${useUtilClass ? packageUtil + '.Util;' : 'cl.uft.commons.model.Util;'}` : ''}
 import ${packageEntity}.${entityName};
-${!useResultProc ? `import com.example.demo.exceptions.EntityNotFoundException;\nimport com.example.demo.exceptions.ErrorProcessingException;\nimport com.example.demo.exceptions.UnsavedEntityException;` : ''}
+${!useResultProc ? `import ${packageExceptions}.EntityNotFoundException;\nimport ${packageExceptions}.ErrorProcessingException;\nimport ${packageExceptions}.UnsavedEntityException;` : ''}
 import ${packageRepository}.${entityName}Repository;
 import ${packageIService}.I${entityName}Service;
 

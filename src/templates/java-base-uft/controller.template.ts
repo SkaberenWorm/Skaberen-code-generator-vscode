@@ -4,6 +4,7 @@ import { snakeCaseRequestMapping, toLowerCaseFirstLetter } from '../../utils/uti
 
 export function getControllerTemplate(
 	entityName: string,
+	packageExceptions: string,
 	packageController: string,
 	packageEntity: string,
 	packageUtil: string,
@@ -35,7 +36,7 @@ import org.springframework.web.bind.annotation.RestController;
 ${useResultProc ? `import ${useUtilClass ? packageUtil + '.ResultadoProc;' : 'cl.uft.commons.model.ResultadoProc;'}` : ''}
 import ${useUtilClass ? packageUtil + '.SearchPagination;' : 'cl.uft.commons.model.SearchPagination;'}
 import ${packageEntity}.${entityName};
-${!useResultProc ? `import com.example.demo.exceptions.EntityNotFoundException;\nimport com.example.demo.exceptions.ErrorProcessingException;\nimport com.example.demo.exceptions.UnsavedEntityException;` : ''}
+${!useResultProc ? `import ${packageExceptions}.EntityNotFoundException;\nimport ${packageExceptions}.ErrorProcessingException;\nimport ${packageExceptions}.UnsavedEntityException;` : ''}
 import ${packageIService}.I${entityName}Service;
 
 @RestController

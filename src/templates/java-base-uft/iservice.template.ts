@@ -4,6 +4,7 @@ import { toLowerCaseFirstLetter } from '../../utils/utils';
 
 export function getIServiceTemplate(
   entityName: string,
+  packageExceptions: string,
   packageIService: string,
   packageEntity: string,
   packageUtil: string,
@@ -23,7 +24,7 @@ import org.springframework.data.domain.PageRequest;
 
 ${useResultProc ? `import ${useUtilClass ? packageUtil + '.ResultadoProc;' : 'cl.uft.commons.model.ResultadoProc;'}` : ''}
 import ${packageEntity}.${entityName};
-${!useResultProc ? `import com.example.demo.exceptions.EntityNotFoundException;\nimport com.example.demo.exceptions.ErrorProcessingException;\nimport com.example.demo.exceptions.UnsavedEntityException;\n` : ''}
+${!useResultProc ? `import ${packageExceptions}.EntityNotFoundException;\nimport ${packageExceptions}.ErrorProcessingException;\nimport ${packageExceptions}.UnsavedEntityException;\n` : ''}
 public interface I${entityName}Service {
 ${insertMethods(entityName, entityNameFirstLetterToLowerCase, typeVariableID, methods, useResultProc)}
 }

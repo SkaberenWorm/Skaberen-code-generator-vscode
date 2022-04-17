@@ -83,6 +83,7 @@ export function createIService(param: ParamMethodJava): Promise<void> | undefine
     const targetDirectory = param.targetDirectory;
 
     const targetPath = `${targetDirectory}/services/I${entityName}Service.java`;
+    const packageException = `${targetDirectory.substring(targetDirectory.indexOf("src/main/java/"), targetDirectory.length)}.exceptions`.replace(new RegExp('/', 'g'), '.').replace('src.main.java.', '');
     const packageIService = `${targetDirectory.substring(targetDirectory.indexOf("src/main/java/"), targetDirectory.length)}.services`.replace(new RegExp('/', 'g'), '.').replace('src.main.java.', '');
     const packageEntity = `${targetDirectory.substring(targetDirectory.indexOf("src/main/java/"), targetDirectory.length)}.entities`.replace(new RegExp('/', 'g'), '.').replace('src.main.java.', '');
     const packageUtil = `${targetDirectory.substring(targetDirectory.indexOf("src/main/java/"), targetDirectory.length)}.utils`.replace(new RegExp('/', 'g'), '.').replace('src.main.java.', '');
@@ -94,6 +95,7 @@ export function createIService(param: ParamMethodJava): Promise<void> | undefine
             targetPath,
             getIServiceTemplate(
                 entityName,
+                packageException,
                 packageIService,
                 packageEntity,
                 packageUtil,
@@ -117,6 +119,7 @@ export function createService(param: ParamMethodJava): Promise<void> | undefined
     const targetDirectory = param.targetDirectory;
 
     const targetPath = `${targetDirectory}/services/impl/${entityName}Service.java`;
+    const packageException = `${targetDirectory.substring(targetDirectory.indexOf("src/main/java/"), targetDirectory.length)}.exceptions`.replace(new RegExp('/', 'g'), '.').replace('src.main.java.', '');
     const packageService = `${targetDirectory.substring(targetDirectory.indexOf("src/main/java/"), targetDirectory.length)}.services/impl`.replace(new RegExp('/', 'g'), '.').replace('src.main.java.', '');
     const packageIService = `${targetDirectory.substring(targetDirectory.indexOf("src/main/java/"), targetDirectory.length)}.services`.replace(new RegExp('/', 'g'), '.').replace('src.main.java.', '');
     const packageEntity = `${targetDirectory.substring(targetDirectory.indexOf("src/main/java/"), targetDirectory.length)}.entities`.replace(new RegExp('/', 'g'), '.').replace('src.main.java.', '');
@@ -130,6 +133,7 @@ export function createService(param: ParamMethodJava): Promise<void> | undefined
             targetPath,
             getServiceTemplate(
                 entityName,
+                packageException,
                 packageService,
                 packageIService,
                 packageEntity,
@@ -156,6 +160,7 @@ export function createController(param: ParamMethodJava): Promise<void> | undefi
     const targetDirectory = param.targetDirectory;
 
     const targetPath = `${targetDirectory}/controllers/${entityName}RestController.java`;
+    const packageException = `${targetDirectory.substring(targetDirectory.indexOf("src/main/java/"), targetDirectory.length)}.exceptions`.replace(new RegExp('/', 'g'), '.').replace('src.main.java.', '');
     const packageController = `${targetDirectory.substring(targetDirectory.indexOf("src/main/java/"), targetDirectory.length)}.controllers`.replace(new RegExp('/', 'g'), '.').replace('src.main.java.', '');
     const packageIService = `${targetDirectory.substring(targetDirectory.indexOf("src/main/java/"), targetDirectory.length)}.services`.replace(new RegExp('/', 'g'), '.').replace('src.main.java.', '');
     const packageEntity = `${targetDirectory.substring(targetDirectory.indexOf("src/main/java/"), targetDirectory.length)}.entities`.replace(new RegExp('/', 'g'), '.').replace('src.main.java.', '');
@@ -168,6 +173,7 @@ export function createController(param: ParamMethodJava): Promise<void> | undefi
             targetPath,
             getControllerTemplate(
                 entityName,
+                packageException,
                 packageController,
                 packageEntity,
                 packageUtil,
