@@ -1,8 +1,8 @@
 {
 	"name": "skaberen-code-generator",
-	"displayName": "Skaberen code generator",
-	"description": "Generate base code for an API REST ",
-	"version": "1.0.7",
+	"displayName": "Spring boot code generator",
+	"description": "Generate base code for an API REST wirh Spring boot",
+	"version": "1.0.8",
 	"engines": {
 		"vscode": "^1.47.0"
 	},
